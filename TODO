@@ -1,0 +1,36 @@
+ _______                _                      _ _       
+|__   __|              | |                    | (_)      
+   | |_      _____  ___| |_ ___  _ __ __ _  __| |_  ___  
+   | \ \ /\ / / _ \/ _ \ __/ _ \| '__/ _` |/ _` | |/ _ \ 
+   | |\ V  V /  __/  __/ || (_) | | | (_| | (_| | | (_) |
+   |_| \_/\_/ \___|\___|\__\___/|_|  \__,_|\__,_|_|\___/ 
+                                                         
+                                                        
+
+Les langages utilisés dans ce projet seront le C et le Java.
+
+Le diffuseur, ainsi que le gestionnaire, seront codés en C.
+L'utilisateur, en revanche, sera codé en Java.
+
+
+Contraintes : 
+
+ - Il faut respecter l'ensemble des spécifications indiquées dans le projet
+ - Pour éviter un possible problème sur les machines de l'ufr, il est possible 
+	que la partie C, on utilise le C ANSI strict comme norme (c'est pas sûr).
+
+Les étapes seront les suivants:
+
+TODO - Développer le diffuseur (partie client TCP + multi-diffusion)
+	- Gérer la connexion TCP avec la gestion des requêtes client et 
+		le stockage des messages à diffuser.
+	- Gérer la multi-diffusion des messages et leur stockage dans l'historique
+TODO - Développer le gestionnaire
+	- Demande d'enregistrement + interrogation du gestionnaire
+TODO - Etablir la communication entre l'utilisateur et le gestionnaire
+
+Extensions possibles : 
+
+ - Envoi de fichier
+ - Extinction propre du système
+ - Des suggestions ?
