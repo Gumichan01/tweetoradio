@@ -1,5 +1,10 @@
 
 
+/**
+    Sauf mention contraire tous les arguments des fonctions doivent être définis
+*/
+
+
 #include <stdlib.h>
 #include <string.h>
 
