@@ -8,8 +8,8 @@
 #ifndef CONST_INCLUDED_H
 #define CONST_INCLUDED_H
 
-#define CR '\r'
-#define LF '\n'
+#define CR '\r'             /* Retour chariot (carriage return)*/
+#define LF '\n'             /* Saut à la ligne (Line feed) */
 
 #define TYPE_LENGTH 4       /* La longueur d'un type de message */
 #define NUM_MESS_LENGTH 4   /* La taille du numéro du message */

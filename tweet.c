@@ -28,6 +28,8 @@ void Tweet_init(Tweet *t)
 
 /*
     Formalise le tweet sous forme d'un message de diffusion
+    [DIFF_id_mess]
+    Ce message sera le message diffusé
 */
 void Tweet_toString(Tweet *t, char *str)
 {

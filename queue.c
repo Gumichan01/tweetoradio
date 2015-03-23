@@ -71,7 +71,7 @@ Tweet * Queue_pop(Queue *q)
 
 
 /*
-    Affiche tous les tweets
+    Affiche tous les tweets (utilisé pour le debogage)
 */
 void Queue_display(Queue *q)
 {
