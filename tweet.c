@@ -31,14 +31,31 @@ void Tweet_init(Tweet *t)
     [DIFF_id_mess]
     Ce message sera le message diffusé
 */
-void Tweet_toString(Tweet *t, char *str)
+void Tweet_toString(Tweet *t, char *str,Tweet_type type)
 {
     char space = ' ';
     int len;
+    int noType = 0;
 
     memset(str,'#', TWEET_LENGTH);  /* On met tous les champs à '#' */
 
-    strcpy(str,"DIFF ");
+
+    switch(type){
+
+        case TWEET_DIFF : strcpy(str,"DIFF ");
+                     break;
+
+        case TWEET_OLDM : strcpy(str,"OLDM ");
+                     break;
+
+        default :   noType = 1;
+                    break;
+    }
+
+    if(noType == 1)
+        return;
+
+
     strncat(str,t->num_mess,NUM_MESS_LENGTH);
 
     strncat(str,&space,sizeof(char));

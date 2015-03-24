@@ -20,9 +20,18 @@ typedef struct Tweet{
 }Tweet;
 
 
+/*
+    Cette énumération définie le type de tweet
+    TWEET_DIFF : tweet en attente de diffusion
+    TWEET_OLDM : tweet dans l'historique
+
+ */
+typedef enum{TWEET_DIFF,TWEET_OLDM} Tweet_type;
+
+
 void Tweet_init(Tweet *t);
 
-void Tweet_toString(Tweet *t, char *str);
+void Tweet_toString(Tweet *t, char *str,Tweet_type type);
 
 int Tweet_str_length(char *str);
 

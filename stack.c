@@ -87,11 +87,11 @@ void Stack_display(Stack *s)
 
     t = s->top;
 
-    printf("Queue display\n");
+    printf("Stack display\n");
 
     while(t != NULL)
     {
-        Tweet_toString(t,str);
+        Tweet_toString(t,str,TWEET_OLDM);
         printf("\n===============================================================\n");
         write(1,str,Tweet_str_length(str));
         printf("\n===============================================================\n");
