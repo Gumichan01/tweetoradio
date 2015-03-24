@@ -7,6 +7,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 #include "stack.h"
 
@@ -81,7 +82,23 @@ Tweet * Stack_peek(Stack *s, unsigned int index)
 */
 void Stack_display(Stack *s)
 {
-    fprintf(stderr,"Not yet Implemented\n");
+    Tweet *t = NULL;
+    char str[TWEET_LENGTH];
+
+    t = s->top;
+
+    printf("Queue display\n");
+
+    while(t != NULL)
+    {
+        Tweet_toString(t,str);
+        printf("\n===============================================================\n");
+        write(1,str,Tweet_str_length(str));
+        printf("\n===============================================================\n");
+        t = t->next;
+    }
+
+    printf("\n");
 }
 
 
