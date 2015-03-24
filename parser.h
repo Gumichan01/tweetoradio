@@ -1,10 +1,10 @@
 
 
+#include "tweet.h"
 
 #ifndef PARSER_INCLUDED_H
 #define PARSER_INCLUDED_H
 
-#include "tweet.h"
 
 
 /*
@@ -53,7 +53,6 @@ typedef struct ParsedMSG{
     Tweet_type tweet_type;
     char num_mess[NUM_MESS_LENGTH];     /* ID du message */
     char mess[MSG_LENGTH];              /* Contenu du message */
-    Tweet *next;                        /* Prochian Tweet (peut être NULL)*/
 
     /* Champs spécifiques au diffuseur */
     char ip_multicast[IP_LENGTH];
@@ -71,7 +70,14 @@ int parse(char *str, ParsedMSG * p);
 
 
 
-
-
-
 #endif /* PARSER_INCLUDED_H */
+
+
+
+
+
+
+
+
+
+

@@ -7,6 +7,28 @@
 
 #include "parser.h"
 
+
+
+void init(ParsedMSG *p)
+{
+    p->msg_type = NO_TYPE;
+
+    memset(p->id,'#',ID_LENGTH);
+    memset(p->nb_mess,'0',NB_MESS_LENGTH);
+
+    memset(p->num_mess,'#',NUM_MESS_LENGTH);
+    memset(p->mess,'#',MSG_LENGTH);
+
+    memset(p->ip_multicast,'0',IP_LENGTH);
+    memset(p->port_multicast,'0',PORT_LENGTH);
+    memset(p->ip_machine,'0',IP_LENGTH);
+    memset(p->port_machine,'0',PORT_LENGTH);
+
+}
+
+
+
+
 /*
     Cette fonction "parse" le message et le sépare
     en plusieurs "token" en fonction de l'entête
@@ -14,6 +36,7 @@
 int parse(char *str, ParsedMSG * p)
 {
     int err = 0;
+    int len = 0;
 
     if(str == NULL || p == NULL)
     {
@@ -25,14 +48,39 @@ int parse(char *str, ParsedMSG * p)
     {
 
         p->msg_type = MESS;
-        err = sscanf(str,"MESS %8[a-zA-Z0-9_-] %140[a-zA-Z0-9?.,;:!/*-+ _#]",p->id,p->mess);
+        err = sscanf(str,"MESS %8[a-zA-Z0-9_-] %140[a-zA-Z0-9?.,;:!/*-+ _#]\r\n",p->id,p->mess);
+
+        if(err > 0)
+        {
+            /* Se débarasser de '\0' */
+            if( (len = strnlen(p->id,ID_LENGTH)) < ID_LENGTH )
+            {
+                p->id[len] = '#';
+            }
+
+            if( (len = strnlen(p->mess,MSG_LENGTH)) < ID_LENGTH )
+            {
+                p->mess[len] = '#';
+            }
+
+        }
 
     }
     else if(!strncmp(str,"LAST",4))     /* Recevoir la demande d'historique des messages */
     {
 
         p->msg_type = LAST;
-        err = sscanf(str,"LAST %3[0-9]",p->nb_mess);
+        err = sscanf(str,"LAST %3[0-9]\r\n",p->nb_mess);
+
+        if(err > 0)
+        {
+
+            if( (len = strnlen(p->nb_mess,NB_MESS_LENGTH)) < ID_LENGTH )
+            {
+                p->nb_mess[len] = '#';
+            }
+
+        }
 
     }
     else
@@ -44,6 +92,7 @@ int parse(char *str, ParsedMSG * p)
     if(err == EOF || err == 0)
     {
         p->msg_type = NO_TYPE;
+        errno = EINVAL;
         return -1;
     }
 
