@@ -27,8 +27,6 @@ void init(ParsedMSG *p)
 }
 
 
-
-
 /*
     Cette fonction "parse" le message et le sépare
     en plusieurs "token" en fonction de l'entête

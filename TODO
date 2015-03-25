@@ -24,9 +24,9 @@ Les étapes seront les suivants:
 
 DOING - Développer le diffuseur (partie client TCP + multi-diffusion)
 	- Créer une file et un tweet (DONE)
-	- Créer un historique de messages
+	- Créer un historique de messages (DONE)
 	- Gérer la connexion TCP avec la gestion des requêtes client et 
-		le stockage des messages à diffuser.
+		le stockage des messages à diffuser. (DOING)
 	- Gérer la multi-diffusion des messages et leur stockage dans l'historique
 TODO - Développer le gestionnaire
 	- Demande d'enregistrement + interrogation du gestionnaire
