@@ -9,7 +9,7 @@
 
 
 
-void init(ParsedMSG *p)
+void ParserMSG_init(ParsedMSG *p)
 {
     p->msg_type = NO_TYPE;
 

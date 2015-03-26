@@ -63,7 +63,7 @@ typedef struct ParsedMSG{
 }ParsedMSG;
 
 
-void init(ParsedMSG *p);
+void ParserMSG_init(ParsedMSG *p);
 
 int parse(char *str, ParsedMSG * p);
 
