@@ -11,6 +11,7 @@
 #include "diffuseur.h"
 #include "queue.h"
 #include "stack.h"
+#include "ip_convert.h"
 
 
 
@@ -35,6 +36,7 @@ void * tcp_server(void *param)
     /** TODO création serveur TCP pour reception du client */
     int err;
     int sockserv;
+    char str[MAX_BYTES];
     struct sockaddr_in in;
 
     memset(&in, 0, sizeof(struct sockaddr));    /* Nettoyage */
@@ -50,7 +52,17 @@ void * tcp_server(void *param)
     in.sin_family = AF_INET;
     in.sin_port = htons(atoi(diff->port_local));
 
-    err = inet_aton(diff->ip_local,&in.sin_addr);
+    ip_set(str,MAX_BYTES);
+    err = ip_from15(diff->ip_local,str);
+
+    if(err == -1)
+    {
+        perror("tcp_server - ip_from15 ");
+        close(sockserv);
+        pthread_exit(NULL);
+    }
+
+    err = inet_aton(str,&in.sin_addr);
 
     if(err == 0)
     {

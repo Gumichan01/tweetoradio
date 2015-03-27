@@ -114,7 +114,7 @@ int ip_from15(const char *ip, char *str)
     memset(str,0,MAX_BYTES);
 
     /* On extrait les champs de l'adresse si possible */
-    err = sscanf(ip,"%d.%d.%d.%d",&field[0],&field[1],&field[2],&field[3]);
+    err = sscanf(ip,"%d.%d.%d.%3d",&field[0],&field[1],&field[2],&field[3]);
 
     if(err == EOF || err == 0)
     {
@@ -139,27 +139,6 @@ int ip_from15(const char *ip, char *str)
     return 0;
 }
 
-
-int main(void)
-{
-    char str[MAX_BYTES +1];
-
-    ip_set(str, MAX_BYTES);
-
-    if(ip_from15("512.010.000.001",str) == -1)
-        perror("ip_from15 ");
-    else
-        printf("%s \n",str);
-
-    ip_set(str, MAX_BYTES);
-
-    if(ip_to15("512.10.0.1",str) == -1)
-        perror("ip_to15 ");
-    else
-        printf("%s \n",str);
-
-    return 0;
-}
 
 
 

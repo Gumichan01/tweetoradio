@@ -9,7 +9,7 @@
 #include <pthread.h>
 
 #include "diffuseur.h"
-
+#include "ip_convert.h"
 
 int main(int argc, char **argv)
 {
@@ -34,8 +34,6 @@ int main(int argc, char **argv)
 
     Diffuseur_init(d);
 
-    /** !! Code sale !! */
-
     len = strlen(argv[1]);
 
     if(len <= ID_LENGTH)
@@ -43,13 +41,12 @@ int main(int argc, char **argv)
     else
         strncpy(d->id,argv[1],ID_LENGTH);
 
-    strncpy(d->ip_multicast,argv[2],IP_LENGTH);
+    /* On remplit les champs du diffuseur */
+    ip_to15(argv[2],d->ip_multicast);
     strncpy(d->port_multicast,argv[3],PORT_LENGTH);
 
-    strncpy(d->ip_local,argv[4],IP_LENGTH);
+    ip_to15(argv[4],d->ip_local);
     strncpy(d->port_local,argv[5],PORT_LENGTH);
-
-    /** !! FIN code sale !! */
 
 
     pthread_create(&thread,NULL,tcp_server,d);
