@@ -18,22 +18,34 @@ Contraintes :
  - Il faut respecter l'ensemble des spécifications indiquées dans le projet
  - Pour éviter un possible problème sur les machines de l'ufr, dans le cadre
 	de l'utilisation du C, on adoptera le C ANSI strict (C89) comme norme.
-	Cela signifie donc qu'à le compilation on utilisera les option -pedantic -g
+ - Cela signifie donc qu'à le compilation on utilisera les options -pedantic -g
+ - L'option '-pedantic' désigne l'utilisation du C89, l'option '-g' servira pour le débogage
 
 Les étapes seront les suivants:
 
 DOING - Développer le diffuseur (partie client TCP + multi-diffusion)
 	- Créer une file et un tweet (DONE)
 	- Créer un historique de messages (DONE)
-	- Gérer la connexion TCP avec la gestion des requêtes client et 
-		le stockage des messages à diffuser. (DOING)
-	- Gérer la multi-diffusion des messages et leur stockage dans l'historique
+	- Créer un analyseur syntaxique (parser) (DONE)
+	- (DOING) Gérer la connexion TCP avec la gestion des requêtes client et 
+	  (DOING) le stockage des messages à diffuser.
+		- (DOING) Connexion client TCP à faire.
+			- (DOING) Enregistrement des messages
+			- (TODO) Liste des messages diffusées
+
+	- Gérer la multi-diffusion des messages et leur stockage dans l'historique (TODO)
+		- (TODO) Diffusion du message aux abonnés.
+		- (TODO) Suvegarde des messages envoyés dans l'historique.
+
 TODO - Développer le gestionnaire
-	- Demande d'enregistrement + interrogation du gestionnaire
+	- Demande d'enregistrement du diffuseur (TODO)
+	- Interrogation du gestionnaire sur l'activité des diffuseurs (TODO)
+
 TODO - Etablir la communication entre l'utilisateur et le gestionnaire
+	- Demande de la liste des diffuseurs actifs (TODO)
 
 Extensions possibles : 
 
- - Envoi de fichier
+ - Partage de fichier 
  - Extinction propre du système
  - Des suggestions ?
