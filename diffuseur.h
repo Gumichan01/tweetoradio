@@ -16,8 +16,6 @@ typedef struct Diffuseur{
 
     char id[ID_LENGTH];
 
-    char portTCP[PORT_LENGTH];
-
     char ip_multicast[IP_LENGTH];
     char port_multicast[PORT_LENGTH];
 
@@ -34,7 +32,9 @@ typedef struct Diffuseur{
 
 void Diffuseur_init(Diffuseur *d);
 
+void * tcp_server(void *param);
 
+void * tcp_request(void * param);
 
 
 
