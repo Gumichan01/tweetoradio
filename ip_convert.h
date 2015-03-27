@@ -15,6 +15,7 @@
 
 #define MAX_BYTES 15
 #define NB_FIELDS 4
+#define BYTE 255
 
 
 void ip_set(char * str, int len);
