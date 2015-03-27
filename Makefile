@@ -11,7 +11,7 @@ EXEC_CLT=
 
 all : $(EXEC_DIFF) $(EXEC_GEST) $(EXEC_CLT)
 
-$(EXEC_DIFF) : tweet.o queue.o stack.o diffuseur.o mainDiffuseur.o
+$(EXEC_DIFF) : tweet.o queue.o stack.o parser.o diffuseur.o mainDiffuseur.o
 	$(CC) -o $(EXEC_DIFF) $^ $(LFLAGS)
 
 tweet.o : tweet.c tweet.h const.h

@@ -33,7 +33,7 @@ void Tweet_init(Tweet *t);
 
 void Tweet_toString(Tweet *t, char *str,Tweet_type type);
 
-int Tweet_str_length(char *str);
+int Tweet_str_length(const char *str);
 
 void Tweet_clean_up(Tweet *t);
 

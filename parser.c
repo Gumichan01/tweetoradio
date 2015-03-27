@@ -31,7 +31,7 @@ void ParserMSG_init(ParsedMSG *p)
     Cette fonction "parse" le message et le sépare
     en plusieurs "token" en fonction de l'entête
 */
-int parse(char *str, ParsedMSG * p)
+int parse(const char *str, ParsedMSG * p)
 {
     int err = 0;
     int len = 0;

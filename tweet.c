@@ -76,7 +76,7 @@ void Tweet_toString(Tweet *t, char *str,Tweet_type type)
 /*
     Évalue la longueur de la chaine génèré par la fonction tostring
 */
-int Tweet_str_length(char *str)
+int Tweet_str_length(const char *str)
 {
     int i = 0;
 
