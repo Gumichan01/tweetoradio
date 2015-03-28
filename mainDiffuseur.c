@@ -11,9 +11,13 @@
 #include "diffuseur.h"
 #include "ip_convert.h"
 
+
+Diffuseur *d = NULL;
+
+
 int main(int argc, char **argv)
 {
-    Diffuseur *d = NULL;
+
     int len;
     pthread_t thread;
 

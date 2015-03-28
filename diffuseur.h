@@ -6,11 +6,16 @@
 
 
 #include "const.h"
+#include "parser.h"
 
 struct Queue;
 struct Stack;
 
+
+
 #define NB_CLIENTS 5
+#define MAX_NUM 999
+#define MIN_NUM 0
 
 typedef struct Diffuseur{
 
@@ -41,10 +46,13 @@ typedef struct Client_info{
 
 void Diffuseur_init(Diffuseur *d);
 
+int int_to_char(int n,char *str);
+
 void * tcp_server(void *param);
 
 void * tcp_request(void * param);
 
+int registerMSG(ParsedMSG *p);
 
 
 #endif /* DIFFUSEUR_INCLUDED_H */

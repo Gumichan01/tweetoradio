@@ -57,13 +57,13 @@ DOING - Développer le diffuseur (partie client TCP + multi-diffusion)
 	- Créer un analyseur syntaxique (parser) (DONE)
 	- (DOING) Gérer la connexion TCP avec la gestion des requêtes client et 
 	  (DOING) le stockage des messages à diffuser.
-		- (DOING) Connexion client TCP à faire.
-			- (DOING) Enregistrement des messages
-			- (TODO) Liste des messages diffusées
+		- Connexion client TCP à faire. (DONE)
+			- Enregistrement des messages (DONE)
+			- (DOING) Liste des messages diffusées
 
 	- Gérer la multi-diffusion des messages et leur stockage dans l'historique (TODO)
 		- (TODO) Diffusion du message aux abonnés.
-		- (TODO) Suvegarde des messages envoyés dans l'historique.
+		- (TODO) Sauvegarde des messages envoyés dans l'historique.
 
 TODO - Développer le gestionnaire
 	- Demande d'enregistrement du diffuseur (TODO)

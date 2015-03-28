@@ -16,6 +16,12 @@
 #include "parser.h"
 
 
+extern Diffuseur *d;    /* Le diffuseur utilisé dan le main */
+
+static pthread_mutex_t verrou = PTHREAD_MUTEX_INITIALIZER;
+
+static int num_mess = 0;
+
 
 void Diffuseur_init(Diffuseur *d)
 {
@@ -30,6 +36,39 @@ void Diffuseur_init(Diffuseur *d)
     d->file_attente = NULL;
     d->historique = NULL;
 }
+
+
+int int_to_char(int n,char *str)
+{
+    char tmp[NUM_MESS_LENGTH+1];
+
+    if(str == NULL || strnlen(str,NUM_MESS_LENGTH) < NUM_MESS_LENGTH)
+    {
+        return -1;
+    }
+
+    if( n > 100 && n < 1000)
+    {
+        snprintf(tmp,NUM_MESS_LENGTH+1,"%d",n);
+    }
+    else if( n > 9)
+    {
+        snprintf(tmp,NUM_MESS_LENGTH+1,"0%d",n);
+    }
+    else if (n > 0)
+    {
+        snprintf(tmp,NUM_MESS_LENGTH+1,"00%d",n);
+    }
+    else
+    {
+        return -1;
+    }
+
+    strncpy(str,tmp,NUM_MESS_LENGTH);
+
+    return 0;
+}
+
 
 
 void * tcp_server(void *param)
@@ -154,8 +193,11 @@ void * tcp_request(void * param)
     int port;
 
     char msg[TWEET_LENGTH];
+    char err_msg[] = "INER : Erreur Interne au serveur.";
     int lus;
     int err;
+
+    Tweet *t = NULL;
 
     /* On va utiliser la structure de parsing */
     ParsedMSG p;
@@ -205,14 +247,44 @@ void * tcp_request(void * param)
     if(err == -1)
     {
         perror("tcp_request - parse() ");
-
-        printf("Message non reconnu du client %s - %d | Fermeture connexion. \n",ip_clt,port);
+        printf("Message non reconnu du client %s - %d | Fermeture connexion.\n",ip_clt,port);
 
         close(sockclt);
         pthread_exit(NULL);
     }
 
-    printf("Message reconnu par le diffuseur et prète à être traité\n");
+    printf("Message reconnu par le diffuseur et pret à être traité\n");
+
+
+    pthread_mutex_lock(&verrou);
+
+    /* On regarde le type de message */
+    switch(p.msg_type)
+    {
+        case MESS : err = registerMSG(&p);
+                    break;
+
+        case LAST : err = 0;
+                    break;
+
+        default :  err = 0;
+                    break;
+    }
+
+    pthread_mutex_unlock(&verrou);
+
+
+    if(err == -1)
+    {
+        /* La conversion a échoué, on ne peut rien faire */
+        send(sockclt,err_msg,strlen(err_msg),0);
+        fprintf(stderr,"tcp_request - int_to_char() : Impossible de numéroter le message suivant : \n");
+        fflush(stderr);
+
+        write(2,t->mess,Tweet_str_length(t->mess));
+        fflush(stderr);
+    }
+
 
     close(sockclt);
     pthread_exit(NULL);
@@ -220,7 +292,70 @@ void * tcp_request(void * param)
 
 
 
+int registerMSG(ParsedMSG *p)
+{
+    Tweet *t = NULL;
 
+    if(p ==  NULL)
+    {
+        return -1;
+    }
+
+    /* On crée le tweet */
+    t = malloc(sizeof(Tweet));
+
+    if(t == NULL)
+    {
+        perror("tcp_request - malloc() ");
+        return -1;
+    }
+
+    Tweet_init(t);
+
+    strncpy(t->id,p->id,ID_LENGTH);
+    strncpy(t->mess,p->mess,MSG_LENGTH);
+
+    if(num_mess == MAX_NUM)
+        num_mess = MIN_NUM;
+    else
+        num_mess++;
+
+    if(int_to_char(num_mess,t->num_mess) == -1)
+    {
+        return -1;
+    }
+
+    if(d->file_attente == NULL)
+    {
+
+        d->file_attente = malloc(sizeof(Queue));
+
+        if(d->file_attente == NULL)
+        {
+            perror("tcp_request - malloc() ");
+
+            return -1;
+        }
+        else
+        {
+            Queue_init(d->file_attente);
+        }
+    }
+
+    Queue_push(d->file_attente,t);
+
+
+    /** Lignes à supprimer */
+
+    Queue_display(d->file_attente);
+    Queue_clean_up(d->file_attente);
+
+    d->file_attente = NULL;
+
+    /** FIN lignes à supprimer */
+
+    return 0;
+}
 
 
 
