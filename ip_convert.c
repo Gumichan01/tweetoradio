@@ -35,6 +35,7 @@ int ip_to15(const char *ip, char *str)
 {
     int field[NB_FIELDS];
     char cfield[4][4];
+    char tmp[MAX_BYTES+1];
     int err;
     int i = 0;
 
@@ -57,7 +58,7 @@ int ip_to15(const char *ip, char *str)
 
     while(i < NB_FIELDS)
     {
-        /* On vérifie si les champs sont valide vis-à-vis de l'adresse IP */
+        /* On vérifie si les champs sont valides vis-à-vis de l'adresse IP */
         if(field[i] > BYTE || field[i] < 0)
         {
             errno = EINVAL;
@@ -81,8 +82,12 @@ int ip_to15(const char *ip, char *str)
         i++;
     }
 
-    /*On écrit le résultat dans la chaine*/
-    sprintf(str,"%s.%s.%s.%s",cfield[0],cfield[1],cfield[2],cfield[3]);
+    /*  On écrit le résultat dans la chaine
+        on met le +1 car '\0' est rajouté
+    */
+    snprintf(tmp,MAX_BYTES+1,"%3s.%3s.%3s.%3s",cfield[0],cfield[1],cfield[2],cfield[3]);
+
+    strncpy(str,tmp,MAX_BYTES); /* On copie le resultat dans str sans mettre '\0' */
 
     return 0;
 }
@@ -104,6 +109,8 @@ int ip_from15(const char *ip, char *str)
     int err;
     int i = 0;
 
+    char tmp[MAX_BYTES +1];
+
     if(ip == NULL || strnlen(ip,MAX_BYTES) < MAX_BYTES ||
             str == NULL || strnlen(str,MAX_BYTES) < MAX_BYTES )
     {
@@ -114,7 +121,7 @@ int ip_from15(const char *ip, char *str)
     memset(str,0,MAX_BYTES);
 
     /* On extrait les champs de l'adresse si possible */
-    err = sscanf(ip,"%d.%d.%d.%3d",&field[0],&field[1],&field[2],&field[3]);
+    err = sscanf(ip,"%3d.%3d.%3d.%3d",&field[0],&field[1],&field[2],&field[3]);
 
     if(err == EOF || err == 0)
     {
@@ -135,6 +142,8 @@ int ip_from15(const char *ip, char *str)
 
     /* On copie ces champs dans la chaine */
     sprintf(str,"%d.%d.%d.%d",field[0],field[1],field[2],field[3]);
+
+    strncpy(str,tmp,strnlen(tmp, MAX_BYTES));
 
     return 0;
 }
