@@ -13,6 +13,7 @@
 #include "queue.h"
 #include "stack.h"
 #include "ip_convert.h"
+#include "parser.h"
 
 
 
@@ -141,7 +142,9 @@ void * tcp_server(void *param)
 
 
 
-
+/*
+    Cette fonction traite les messages clients
+*/
 void * tcp_request(void * param)
 {
     Client_info *c = (Client_info *) param;
@@ -152,6 +155,12 @@ void * tcp_request(void * param)
 
     char msg[TWEET_LENGTH];
     int lus;
+    int err;
+
+    /* On va utiliser la structure de parsing */
+    ParsedMSG p;
+
+    ParserMSG_init(&p);
 
     /* On récupère les champs */
     strcpy(ip_clt,c->ip);
@@ -177,20 +186,36 @@ void * tcp_request(void * param)
     if(lus < 2 || msg[lus-1] != '\n' || msg[lus-2] != '\r')
     {
         printf("Message invalide issue du client %s %d \n",ip_clt,port);
-    }
-    else
-    {
-        /* Il faut aussi vider le cache, sinon -> problème d'affichage */
-        printf("Message reçu depuis le client %s - %d : ",ip_clt,port);
-        fflush(stdout);
 
-        write(1,msg,lus);
-        printf("\n");
+        close(sockclt);
+        pthread_exit(NULL);
     }
+
+
+    /* Il faut aussi vider le cache, sinon -> problème d'affichage */
+    printf("Message reçu depuis le client %s - %d : ",ip_clt,port);
+    fflush(stdout);
+
+    write(1,msg,lus);
+    printf("\n");
+
+    /* On analyse le message */
+    err = parse(msg,&p);
+
+    if(err == -1)
+    {
+        perror("tcp_request - parse() ");
+
+        printf("Message non reconnu du client %s - %d | Fermeture connexion. \n",ip_clt,port);
+
+        close(sockclt);
+        pthread_exit(NULL);
+    }
+
+
 
 
     close(sockclt);
-
     pthread_exit(NULL);
 }
 
