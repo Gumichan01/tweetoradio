@@ -13,7 +13,7 @@
 
 int main(int argc, char **argv)
 {
-    Diffuseur *d;
+    Diffuseur *d = NULL;
     int len;
     pthread_t thread;
 

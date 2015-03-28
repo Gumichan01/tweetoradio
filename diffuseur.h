@@ -30,6 +30,15 @@ typedef struct Diffuseur{
 
 
 
+typedef struct Client_info{
+
+    char ip[IP_LENGTH+1];
+    int port;
+    int sockclt;
+}Client_info;
+
+
+
 void Diffuseur_init(Diffuseur *d);
 
 void * tcp_server(void *param);
