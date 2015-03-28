@@ -212,8 +212,7 @@ void * tcp_request(void * param)
         pthread_exit(NULL);
     }
 
-
-
+    printf("Message reconnu par le diffuseur et prète à être traité\n");
 
     close(sockclt);
     pthread_exit(NULL);
