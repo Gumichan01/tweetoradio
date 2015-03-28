@@ -36,10 +36,17 @@ void * tcp_server(void *param)
     /** TODO création serveur TCP pour reception du client */
     int err;
     int sockserv;
-    char str[MAX_BYTES];
+    int sockclt;
+    /*int *sock = NULL;*/
+
+    socklen_t sz;
     struct sockaddr_in in;
+    struct sockaddr_in clt;
+
+    /*pthread_t th;*/
 
     memset(&in, 0, sizeof(struct sockaddr));    /* Nettoyage */
+
 
     sockserv = socket(PF_INET,SOCK_STREAM,0);
 
@@ -51,9 +58,10 @@ void * tcp_server(void *param)
 
     in.sin_family = AF_INET;
     in.sin_port = htons(atoi(diff->port_local));
+    in.sin_addr.s_addr = htonl(INADDR_ANY);
 
-    ip_set(str,MAX_BYTES);
-    err = ip_from15(diff->ip_local,str);
+    ip_set(diff->ip_local,MAX_BYTES);
+    err = ip_to15(inet_ntoa(in.sin_addr),diff->ip_local);
 
     if(err == -1)
     {
@@ -62,13 +70,43 @@ void * tcp_server(void *param)
         pthread_exit(NULL);
     }
 
-    err = inet_aton(str,&in.sin_addr);
+    sz = sizeof(struct sockaddr_in);
 
-    if(err == 0)
+    err = bind(sockserv,(struct sockaddr *) &in, sz);
+
+    if(err == -1)
     {
-        perror("tcp_server - inet_aton() ");
+        perror("tcp_server - bind ");
         close(sockserv);
         pthread_exit(NULL);
+    }
+
+    err = listen(sockserv,NB_CLIENTS);
+
+    if(err == -1)
+    {
+        perror("tcp_server - listen ");
+        close(sockserv);
+        pthread_exit(NULL);
+    }
+
+    printf("Diffuseur %.8s en attente sur le port : %d \n",diff->id,ntohs(in.sin_port));
+
+    sz = sizeof(in);
+
+    while(1)
+    {
+            sockclt = accept(sockserv,(struct sockaddr *) &clt,&sz);
+
+            if(sockclt == -1)
+            {
+                perror("tcp_server - accept ");
+                break;
+            }
+
+            printf("Client connecté - IP : %s | Port : %d \n",inet_ntoa(clt.sin_addr),ntohs(clt.sin_port));
+
+            close(sockclt); break; /* Le break est inutile, c'est juste pour terminer le programme */
     }
 
     close(sockserv);

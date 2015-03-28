@@ -45,7 +45,7 @@ int main(int argc, char **argv)
     ip_to15(argv[2],d->ip_multicast);
     strncpy(d->port_multicast,argv[3],PORT_LENGTH);
 
-    ip_to15(argv[4],d->ip_local);
+    /*ip_to15(argv[4],d->ip_local);*/
     strncpy(d->port_local,argv[5],PORT_LENGTH);
 
 

@@ -10,7 +10,7 @@
 struct Queue;
 struct Stack;
 
-
+#define NB_CLIENTS 5
 
 typedef struct Diffuseur{
 
