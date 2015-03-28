@@ -34,7 +34,7 @@ Quelques consignes :
  - Peu importe la langue utilisée pour les noms de variables ou de fonction, 
 	l'important c'est que les noms doivent être pertinents.
 
- - En revanche les commentaires doivent être en français
+ - En revanche les commentaires ainsi que les messages de commit doivent être en français
 
  - Pour le débogage, EVITEZ de mettre des printf partout dans le code.
 	C'est dégueulasse et en plus il faudra les supprimer à chaque commit.
