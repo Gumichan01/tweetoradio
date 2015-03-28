@@ -9,17 +9,45 @@
 
 Les langages utilisés dans ce projet seront le C et le Java.
 
-Le diffuseur, ainsi que le gestionnaire, seront codés en C.
-L'utilisateur, en revanche, sera codé en Java.
+Sauf changement :
+ Le diffuseur, ainsi que le gestionnaire, seront codés en C.
+ L'utilisateur, en revanche, sera codé en Java.
+
 
 
 Contraintes : 
 
  - Il faut respecter l'ensemble des spécifications indiquées dans le projet
+
  - Pour éviter un possible problème sur les machines de l'ufr, dans le cadre
 	de l'utilisation du C, on adoptera le C ANSI strict (C89) comme norme.
- - Cela signifie donc qu'à le compilation on utilisera les options -pedantic -g
+
+ - Cela signifie donc qu'à la compilation on utilisera les options -pedantic -g
+
  - L'option '-pedantic' désigne l'utilisation du C89, l'option '-g' servira pour le débogage
+
+
+
+Quelques consignes :
+
+
+ - Peu importe la langue utilisée pour les noms de variables ou de fonction, 
+	l'important c'est que les noms doivent être pertinents.
+
+ - En revanche les commentaires doivent être en français
+
+ - Pour le débogage, EVITEZ de mettre des printf partout dans le code.
+	C'est dégueulasse et en plus il faudra les supprimer à chaque commit.
+	Par contre les printf pertinents qui serviront pour le mode verbeux
+	lors de la soutenance sont autorisés. 
+
+ - Utilisez gdb (GNU Debugger) si vous voulez deboguer votre code proprement,
+	et valgrind pour la détection des fuites mémoire.
+	Si vous [ne savez pas/n'avez jamais] [utiliser/utilisé] gdb, j'ai un TP relatif
+	au module "Génie Logiciel et environnement de dévelopement" que je suis qui sera utile.
+
+ - On travaillera sur Git (Pas de dropbox ou de courriel ou je ne sais quoi !! On est des geeks :) !!)
+
 
 Les étapes seront les suivants:
 
