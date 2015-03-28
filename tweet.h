@@ -15,13 +15,14 @@ typedef struct Tweet{
     char num_mess[NUM_MESS_LENGTH];     /* ID du message */
     char id[ID_LENGTH];                 /* ID de l'expediteur */
     char mess[MSG_LENGTH];              /* Contenu du message */
-    struct Tweet *next;                 /* Prochian Tweet (peut être NULL)*/
+    struct Tweet *next;                 /* Prochian Tweet (peut être NULL) */
 
 }Tweet;
 
 
 /*
     Cette énumération définie le type de tweet
+
     TWEET_DIFF : tweet en attente de diffusion
     TWEET_OLDM : tweet dans l'historique
 

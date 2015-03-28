@@ -78,17 +78,17 @@ void Tweet_toString(Tweet *t, char *str,Tweet_type type)
 */
 int Tweet_str_length(const char *str)
 {
-    int i = 0;
+    int i = TWEET_LENGTH -3;    /* -3 car on a resp. '\r' et '\n' en derniers caractères*/
 
     if(str == NULL)
         return -1;
 
-    while(i < TWEET_LENGTH && str[i] != '#')
+    while(i > 0 && str[i] == '#')
     {
-        i++;
+        i--;
     }
 
-    return i;
+    return i+1;     /* i+1 car on etait à l'indice du dernier caractère avant le '#' */
 }
 
 
