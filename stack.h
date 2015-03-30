@@ -7,7 +7,7 @@
 
 typedef struct Stack{
 
-    int size;
+    unsigned int size;
     Tweet *top;
 
 }Stack;

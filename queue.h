@@ -8,7 +8,7 @@
 */
 typedef struct Queue{
 
-    int size;
+    unsigned int size;
     Tweet *head;
     Tweet *tail;
 
