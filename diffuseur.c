@@ -360,12 +360,12 @@ int registerMSG(ParsedMSG *p)
 }
 
 
-
+/* Envoie l'accusé de recption au client */
 void envoiAccuse(int sockclt)
 {
     char ok_msg[] = "ACKM\r\n";
 
-    if(send(sockclt,ok_msg,strlen(ok_msg),0) )
+    if(send(sockclt,ok_msg,strlen(ok_msg),0) == -1 )
     {
         perror("envoiAccuse - send : ");
     }
