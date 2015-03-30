@@ -193,11 +193,9 @@ void * tcp_request(void * param)
     int port;
 
     char msg[TWEET_LENGTH];
-    char err_msg[] = "INER : Erreur Interne au serveur.";
     int lus;
     int err;
 
-    Tweet *t = NULL;
 
     /* On va utiliser la structure de parsing */
     ParsedMSG p;
@@ -261,7 +259,14 @@ void * tcp_request(void * param)
     /* On regarde le type de message */
     switch(p.msg_type)
     {
-        case MESS : err = registerMSG(&p);
+        case MESS : {
+                        err = registerMSG(&p);
+
+                        if(err != -1)
+                        {   /* Pas de problème, on envoie l'accusé */
+                            envoiAccuse(sockclt);
+                        }
+                    }
                     break;
 
         case LAST : err = 0;
@@ -276,13 +281,10 @@ void * tcp_request(void * param)
 
     if(err == -1)
     {
-        /* La conversion a échoué, on ne peut rien faire */
-        send(sockclt,err_msg,strlen(err_msg),0);
-        fprintf(stderr,"tcp_request - int_to_char() : Impossible de numéroter le message suivant : \n");
+        /* Echec, on ne peut rien faire, NE DOIT JAMAIS ETRE EXCECUTE */
+        fprintf(stderr,"tcp_request() : Erreur interne liée aux opérations internes, Veuillez contacter un administrateur.\n");
         fflush(stderr);
 
-        write(2,t->mess,Tweet_str_length(t->mess));
-        fflush(stderr);
     }
 
 
@@ -359,7 +361,16 @@ int registerMSG(ParsedMSG *p)
 
 
 
+void envoiAccuse(int sockclt)
+{
+    char ok_msg[] = "ACKM\r\n";
 
+    if(send(sockclt,ok_msg,strlen(ok_msg),0) )
+    {
+        perror("envoiAccuse - send : ");
+    }
+
+}
 
 
 

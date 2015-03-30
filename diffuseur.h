@@ -54,6 +54,8 @@ void * tcp_request(void * param);
 
 int registerMSG(ParsedMSG *p);
 
+void envoiAccuse(int sockclt);
+
 
 #endif /* DIFFUSEUR_INCLUDED_H */
 
