@@ -12,7 +12,7 @@
 #include "ip_convert.h"
 
 
-Diffuseur *d = NULL;
+Diffuseur *diff = NULL;
 
 
 int main(int argc, char **argv)
@@ -28,37 +28,37 @@ int main(int argc, char **argv)
         return EXIT_FAILURE;
     }
 
-    d = malloc(sizeof(Diffuseur));
+    diff = malloc(sizeof(Diffuseur));
 
-    if(d == NULL)
+    if(diff == NULL)
     {
         perror("main diffuseur - malloc() ");
         return EXIT_FAILURE;
     }
 
-    Diffuseur_init(d);
+    Diffuseur_init(diff);
 
     len = strlen(argv[1]);
 
     if(len <= ID_LENGTH)
-        strncpy(d->id,argv[1],len);
+        strncpy(diff->id,argv[1],len);
     else
-        strncpy(d->id,argv[1],ID_LENGTH);
+        strncpy(diff->id,argv[1],ID_LENGTH);
 
     /* On remplit les champs du diffuseur */
-    ip_to15(argv[2],d->ip_multicast);
-    strncpy(d->port_multicast,argv[3],PORT_LENGTH);
+    ip_to15(argv[2],diff->ip_multicast);
+    strncpy(diff->port_multicast,argv[3],PORT_LENGTH);
 
     /*ip_to15(argv[4],d->ip_local);*/
-    strncpy(d->port_local,argv[5],PORT_LENGTH);
+    strncpy(diff->port_local,argv[5],PORT_LENGTH);
 
 
-    pthread_create(&thread,NULL,tcp_server,d);
+    pthread_create(&thread,NULL,tcp_server,NULL);
 
     pthread_join(thread,NULL);
 
 
-    free(d);
+    free(diff);
 
     return EXIT_SUCCESS;
 }

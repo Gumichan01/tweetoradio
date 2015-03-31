@@ -16,7 +16,7 @@
 #include "parser.h"
 
 
-extern Diffuseur *d;    /* Le diffuseur utilisé dan le main */
+extern Diffuseur *diff;    /* Le diffuseur utilisé dan le main */
 
 static pthread_mutex_t verrou = PTHREAD_MUTEX_INITIALIZER;
 
@@ -47,17 +47,21 @@ int int_to_char(int n,char *str)
         return -1;
     }
 
-    if( n > 100 && n < 1000)
+    if( n > 1000 && n < 10000)
     {
         snprintf(tmp,NUM_MESS_LENGTH+1,"%d",n);
     }
-    else if( n > 9)
+    else if( n > 100)
     {
         snprintf(tmp,NUM_MESS_LENGTH+1,"0%d",n);
     }
-    else if (n > 0)
+    else if( n > 9)
     {
         snprintf(tmp,NUM_MESS_LENGTH+1,"00%d",n);
+    }
+    else if (n > 0)
+    {
+        snprintf(tmp,NUM_MESS_LENGTH+1,"000%d",n);
     }
     else
     {
@@ -73,7 +77,6 @@ int int_to_char(int n,char *str)
 
 void * tcp_server(void *param)
 {
-    Diffuseur *diff = (Diffuseur *) param;
     /** TODO création serveur TCP pour reception du client */
     int err;
     int sockserv;
@@ -251,7 +254,7 @@ void * tcp_request(void * param)
         pthread_exit(NULL);
     }
 
-    printf("Message reconnu par le diffuseur et pret à être traité\n");
+    printf("Message reconnu par le diffuseur et pret à être traité\n\n");
 
 
     pthread_mutex_lock(&verrou);
@@ -269,7 +272,7 @@ void * tcp_request(void * param)
                     }
                     break;
 
-        case LAST : err = 0;
+        case LAST : err = envoiMessagesHisto(&p,sockclt);
                     break;
 
         default :  err = 0;
@@ -317,8 +320,8 @@ int registerMSG(ParsedMSG *p)
     strncpy(t->id,p->id,ID_LENGTH);
     strncpy(t->mess,p->mess,MSG_LENGTH);
 
-    if(num_mess == MAX_NUM)
-        num_mess = MIN_NUM;
+    if(num_mess == MAX_NUM_MESSAGE)
+        num_mess = MIN_NUM_MESSAGE;
     else
         num_mess++;
 
@@ -327,12 +330,12 @@ int registerMSG(ParsedMSG *p)
         return -1;
     }
 
-    if(d->file_attente == NULL)
+    if(diff->file_attente == NULL)
     {
 
-        d->file_attente = malloc(sizeof(Queue));
+        diff->file_attente = malloc(sizeof(Queue));
 
-        if(d->file_attente == NULL)
+        if(diff->file_attente == NULL)
         {
             perror("tcp_request - malloc() ");
 
@@ -340,20 +343,18 @@ int registerMSG(ParsedMSG *p)
         }
         else
         {
-            Queue_init(d->file_attente);
+            Queue_init(diff->file_attente);
         }
     }
 
-    Queue_push(d->file_attente,t);
+    Queue_push(diff->file_attente,t);
 
+    Queue_display(diff->file_attente);
 
     /** Lignes à supprimer */
+    Queue_clean_up(diff->file_attente);
 
-    Queue_display(d->file_attente);
-    Queue_clean_up(d->file_attente);
-
-    d->file_attente = NULL;
-
+    diff->file_attente = NULL;
     /** FIN lignes à supprimer */
 
     return 0;
@@ -372,8 +373,58 @@ void envoiAccuse(int sockclt)
 
 }
 
+/*
+    Envoi les messages de l'historique au client
+ */
+int envoiMessagesHisto(ParsedMSG *p, int sockclt)
+{
+    char end_msg[] = "ENDM\r\n";
+    char str[TWEET_LENGTH];
+    int i = 0, err;
+    int size = 0;
 
+    Tweet *t= NULL;
 
+    if(p == NULL)
+        return -1;
+
+    if(diff->historique != NULL)
+    {
+        size = atoi(p->nb_mess);    /* On stocke le nombre de messages */
+
+        /*Le client demande trop de messages par rapport au contenu de l'historique */
+        if( size > diff->historique->size )
+        {
+            size = diff->historique->size;
+        }
+
+        /* On envoie autant de messages que possible */
+        while(i < size)
+        {
+            t = Stack_peek(diff->historique,i);
+
+            if(t == NULL)
+                break;
+
+            Tweet_toString(t,str,p->tweet_type);
+
+            err = send(sockclt,str,TWEET_LENGTH,0);
+
+            if(err == -1)
+            {
+                perror("envoiMessagesHisto - send() ");
+            }
+
+            i++;
+        }
+
+    }
+
+    /* Fin de message */
+    send(sockclt,end_msg,strlen(end_msg),0);
+
+    return 0;
+}
 
 
 

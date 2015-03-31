@@ -14,8 +14,7 @@ struct Stack;
 
 
 #define NB_CLIENTS 5
-#define MAX_NUM 999
-#define MIN_NUM 0
+
 
 typedef struct Diffuseur{
 
@@ -40,6 +39,7 @@ typedef struct Client_info{
     char ip[IP_LENGTH+1];
     int port;
     int sockclt;
+
 }Client_info;
 
 
@@ -55,6 +55,8 @@ void * tcp_request(void * param);
 int registerMSG(ParsedMSG *p);
 
 void envoiAccuse(int sockclt);
+
+int envoiMessagesHisto(ParsedMSG *p, int sockclt);
 
 
 #endif /* DIFFUSEUR_INCLUDED_H */
