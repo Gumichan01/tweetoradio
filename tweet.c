@@ -21,7 +21,7 @@ void Tweet_init(Tweet *t)
 {
     memset(t->num_mess,'0',NUM_MESS_LENGTH);
     memset(t->id,'#',ID_LENGTH);
-    memset(t->mess,'#',ID_LENGTH);
+    memset(t->mess,'#',MSG_LENGTH);
     t->next = NULL;
 }
 
