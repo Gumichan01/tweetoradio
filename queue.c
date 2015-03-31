@@ -78,13 +78,16 @@ void Queue_display(Queue *q)
     Tweet *t = NULL;
     char str[TWEET_LENGTH];
 
+    Tweet_state st;
+    st.etat = 0;
+
     t = q->head;
 
     printf("Queue display\n");
 
     while(t != NULL)
     {
-        Tweet_toString(t,str,TWEET_DIFF);
+        Tweet_toString(t,str,&st);
         printf("\n===============================================================\n");
         write(1,str,Tweet_str_length(str));
         printf("\n===============================================================\n");

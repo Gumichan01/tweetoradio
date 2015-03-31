@@ -53,9 +53,9 @@ typedef struct ParsedMSG{
 
 
     /* Champs spécifiques à un tweet */
-    Tweet_type tweet_type;
     char num_mess[NUM_MESS_LENGTH];     /* ID du message */
     char mess[MSG_LENGTH];              /* Contenu du message */
+
 
     /* Champs spécifiques au diffuseur */
     char ip_multicast[IP_LENGTH];

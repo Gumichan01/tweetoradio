@@ -361,7 +361,7 @@ int registerMSG(ParsedMSG *p)
 }
 
 
-/* Envoie l'accusé de recption au client */
+/* Envoie l'accusé de reception au client */
 void envoiAccuse(int sockclt)
 {
     char ok_msg[] = "ACKM\r\n";
@@ -383,7 +383,10 @@ int envoiMessagesHisto(ParsedMSG *p, int sockclt)
     int i = 0, err;
     int size = 0;
 
+    Tweet_state st;
     Tweet *t= NULL;
+
+    st.etat = 1;
 
     if(p == NULL)
         return -1;
@@ -406,7 +409,7 @@ int envoiMessagesHisto(ParsedMSG *p, int sockclt)
             if(t == NULL)
                 break;
 
-            Tweet_toString(t,str,p->tweet_type);
+            Tweet_toString(t,str,&st);
 
             err = send(sockclt,str,TWEET_LENGTH,0);
 
@@ -428,7 +431,23 @@ int envoiMessagesHisto(ParsedMSG *p, int sockclt)
 
 
 
+void * multicast_diffuser(void * param)
+{
+    /*int err;
+    int sock_multicast;
 
+    socklen_t sz;
+    struct sockaddr_in in;*/
+
+
+
+
+
+
+
+
+    pthread_exit(NULL);
+}
 
 
 

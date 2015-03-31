@@ -28,10 +28,10 @@ void Tweet_init(Tweet *t)
 
 /*
     Formalise le tweet sous forme d'un message de diffusion
-    [DIFF_id_mess]
+    [DIFF_id_mess] ou bien [OLDM_id_mess]
     Ce message sera le message diffusé
 */
-void Tweet_toString(Tweet *t, char *str,Tweet_type type)
+void Tweet_toString(Tweet *t, char *str,Tweet_state *type)
 {
     char space = ' ';
     int len;
@@ -39,13 +39,16 @@ void Tweet_toString(Tweet *t, char *str,Tweet_type type)
 
     memset(str,'#', TWEET_LENGTH);  /* On met tous les champs à '#' */
 
+    if(type == NULL)
+        return;
 
-    switch(type){
 
-        case TWEET_DIFF : strcpy(str,"DIFF ");
+    switch(type->etat){
+
+        case 0 : strcpy(str,"DIFF ");
                      break;
 
-        case TWEET_OLDM : strcpy(str,"OLDM ");
+        case 1 : strcpy(str,"OLDM ");
                      break;
 
         default :   noType = 1;

@@ -21,18 +21,28 @@ typedef struct Tweet{
 
 
 /*
-    Cette énumération définie le type de tweet
+    Cette structure définit le type de tweet
 
-    TWEET_DIFF : tweet en attente de diffusion
-    TWEET_OLDM : tweet dans l'historique
+    Les valeurs sont les suivantes
+
+    0 : tweet en attente de diffusion
+    1 : tweet dans l'historique
+
+
+    On a utilisé une structure au lieu d'une énumération
+    car on avait un effet de bord indésirable et indébogable
 
  */
-typedef enum{TWEET_DIFF,TWEET_OLDM} Tweet_type;
+typedef struct Tweet_state{
+
+    int etat;
+
+}Tweet_state;
 
 
 void Tweet_init(Tweet *t);
 
-void Tweet_toString(Tweet *t, char *str,Tweet_type type);
+void Tweet_toString(Tweet *t, char *str,Tweet_state *type);
 
 int Tweet_str_length(const char *str);
 

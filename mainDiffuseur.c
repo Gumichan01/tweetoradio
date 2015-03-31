@@ -20,6 +20,7 @@ int main(int argc, char **argv)
 
     int len;
     pthread_t thread;
+    pthread_t thread_multi;
 
 
     if(argc < 6)
@@ -49,14 +50,14 @@ int main(int argc, char **argv)
     ip_to15(argv[2],diff->ip_multicast);
     strncpy(diff->port_multicast,argv[3],PORT_LENGTH);
 
-    /*ip_to15(argv[4],d->ip_local);*/
     strncpy(diff->port_local,argv[5],PORT_LENGTH);
 
 
     pthread_create(&thread,NULL,tcp_server,NULL);
+    pthread_create(&thread_multi,NULL,multicast_diffuser,NULL);
 
     pthread_join(thread,NULL);
-
+    pthread_join(thread_multi,NULL);
 
     free(diff);
 

@@ -58,6 +58,8 @@ void envoiAccuse(int sockclt);
 
 int envoiMessagesHisto(ParsedMSG *p, int sockclt);
 
+void * multicast_diffuser(void * param);
+
 
 #endif /* DIFFUSEUR_INCLUDED_H */
 
