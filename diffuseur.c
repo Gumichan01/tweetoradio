@@ -3,7 +3,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
 
 #include <pthread.h>
 
@@ -433,18 +432,83 @@ int envoiMessagesHisto(ParsedMSG *p, int sockclt)
 
 void * multicast_diffuser(void * param)
 {
-    /*int err;
+    int err;
     int sock_multicast;
 
     socklen_t sz;
-    struct sockaddr_in in;*/
+    struct sockaddr *in;
+
+    struct addrinfo hints;
+    struct addrinfo *res;
+
+    char ip_addr[IP_LENGTH+1];
+    char port[PORT_LENGTH +1];
+
+    /* On initialise le multidiffuseur */
+
+    printf("Multidiffuseur %.8s : %.15s %.4s\n",diff->id,diff->ip_multicast,diff->port_multicast);
+
+    sock_multicast = socket(PF_INET,SOCK_DGRAM,0);
+
+    if(sock_multicast == -1)
+    {
+        perror("multicast_diffuser - socket() ");
+        pthread_exit(NULL);
+    }
+
+    bzero(&hints,sizeof(struct addrinfo));
+
+    /* On ne veut que que l'UDP IPv4*/
+    hints.ai_family = AF_INET;
+    hints.ai_socktype = SOCK_DGRAM;
 
 
+    /* Conversion adresse IP sur 15 octets -> adreese IP canonique */
+    ip_set(ip_addr,MAX_BYTES);
+    err = ip_from15(diff->ip_multicast,ip_addr);
+
+    if(err == -1)
+    {
+        perror("multicast_diffuser - ip_from15() ");
+        close(sock_multicast);
+        pthread_exit(NULL);
+    }
+
+    /* On récupère le port proprement */
+    sprintf(port,"%4d",atoi(diff->port_multicast));
 
 
+    err = getaddrinfo(ip_addr,port,&hints,&res);
 
 
+    if(err != 0)
+    {
+        perror("multicast_diffuser - getaddrinfo() ");
+        close(sock_multicast);
+        pthread_exit(NULL);
+    }
 
+    if(res != NULL)
+        in = res->ai_addr;
+
+    sz = (socklen_t)sizeof(struct sockaddr);
+
+    printf("Multidiffuseur %.8s à l'adresse %s en multidiffusion sur le port : %.4s\n",diff->id,ip_addr,diff->port_multicast);
+
+    while(1)
+    {
+        sleep(1);
+        err = sendto(sock_multicast,"IMOK\r\n",6,0,in,sz);
+
+        if(err == -1)
+        {
+            perror("multicast_diffuser - sendto() ");
+        }
+    }
+
+    freeaddrinfo(res);
+
+    close(sock_multicast);
 
     pthread_exit(NULL);
 }
