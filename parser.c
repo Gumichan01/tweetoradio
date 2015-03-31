@@ -36,6 +36,11 @@ int parse(const char *str, ParsedMSG * p)
     int err = 0;
     int len = 0;
 
+    char sp1, sp2;              /* Caractère qui doit recevoir ' ' */
+    char space = ' ';           /* espace */
+
+    int nb;
+
     if(str == NULL || p == NULL)
     {
         errno = EINVAL;
@@ -46,9 +51,9 @@ int parse(const char *str, ParsedMSG * p)
     {
 
         p->msg_type = MESS;
-        err = sscanf(str,"MESS %8[a-zA-Z0-9_-] %140[a-zA-Z0-9?.,;:!/*-+ _#]\r\n",p->id,p->mess);
+        err = sscanf(str,"MESS%c%8[a-zA-Z0-9_-]%c%140[a-zA-Z0-9?.,;:!/*-+ _#]\r\n",&sp1,p->id,&sp2,p->mess);
 
-        if(err > 0)
+        if(err > 0 && sp1 == space && sp2 == space)
         {
             /* Se débarasser de '\0' */
             if( (len = strnlen(p->id,ID_LENGTH)) < ID_LENGTH )
@@ -62,22 +67,32 @@ int parse(const char *str, ParsedMSG * p)
             }
 
         }
+        else
+        {
+            err = (sp1 != space || sp2 != space) ? 0:err;
+        }
 
     }
     else if(!strncmp(str,"LAST",4))     /* Recevoir la demande d'historique des messages */
     {
 
         p->msg_type = LAST;
-        err = sscanf(str,"LAST %3[0-9]\r\n",p->nb_mess);
+        err = sscanf(str,"LAST%c%d\r\n",&sp1,&nb);
 
-        if(err > 0)
+        if(err > 0 && sp1 == space && nb >= MIN_NB_MESS && nb <= MAX_NB_MESS)
         {
+
+            sprintf(p->nb_mess,"%d",nb);
 
             if( (len = strnlen(p->nb_mess,NB_MESS_LENGTH)) < ID_LENGTH )
             {
                 p->nb_mess[len] = '#';
             }
 
+        }
+        else
+        {
+            err = (sp1 != space || nb < MIN_NB_MESS || nb > MAX_NB_MESS) ? 0:err;
         }
 
     }
@@ -90,6 +105,7 @@ int parse(const char *str, ParsedMSG * p)
     if(err == EOF || err == 0)
     {
         p->msg_type = NO_TYPE;
+        ParserMSG_init(p);
         errno = EINVAL;
         return -1;
     }

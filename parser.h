@@ -6,6 +6,9 @@
 #define PARSER_INCLUDED_H
 
 
+#define MAX_NB_MESS 999     /* Nombre max de messages affichables dans l'historique */
+#define MIN_NB_MESS 0       /* Nombre min de messages affichables dans l'historique */
+
 
 /*
     Cette énumération permet de connaitre le type de message reçu
@@ -16,7 +19,7 @@
     - MESS, LAST : Messages envoyés par le client au diffuseur
     - REOK, RENO, RUOK : Messages envoyés par le gestionnaire au diffuseur
     - IMOK : Messages envoyés par le diffuseur au gestionnaire
-    - LIST : Messages envoyés par l'iutilisateur au gestionnaire
+    - LIST : Messages envoyés par l'utilisateur au gestionnaire
     - NO_TYPE : Pas de type défini
 
     NOTE :
@@ -24,7 +27,7 @@
     1 - Il est que cette liste ne soit pas exaustive et
         qu'il y ait des oublis.
 
-    2 - Il est également possible l'utilisateur ait besoin de cette structure
+    2 - Il est également possible que l'utilisateur ait besoin de cette structure
         pour traiter les messages reçus. Pour le moment, cette fonctionnalité
         ne sera pas intégrée.
 
@@ -37,8 +40,8 @@ typedef enum{MESS,LAST,REOK,RENO,RUOK,IMOK,LIST,NO_TYPE} ReceivedMSG_type;
     à un message reçu par le diffuseur ou le gestionnaire.
     Il est possible que tous les champs ne soit pas remplis.
     Cela est tout à faire normal dans la mesure où certains messages
-    ne vont vont contenir que les informations pertinentes pour le destinaire
-    en fonction de son type
+    ne vont contenir que les informations pertinentes pour le destinaire
+    en fonction de son type.
 
 */
 typedef struct ParsedMSG{
@@ -46,7 +49,7 @@ typedef struct ParsedMSG{
     ReceivedMSG_type msg_type;
 
     char id[ID_LENGTH];                 /* ID de l'entité */
-    char nb_mess[NB_MESS_LENGTH];       /*  */
+    char nb_mess[NB_MESS_LENGTH];       /* Nombre de message */
 
 
     /* Champs spécifiques à un tweet */
