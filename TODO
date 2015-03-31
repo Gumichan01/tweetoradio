@@ -39,7 +39,7 @@ Quelques consignes :
  - Pour le débogage, EVITEZ de mettre des printf partout dans le code.
 	C'est dégueulasse et en plus il faudra les supprimer à chaque commit.
 	Par contre les printf pertinents qui serviront pour le mode verbeux
-	lors de la soutenance sont autorisés. 
+	lors de la soutenance sont autorisés.
 
  - Utilisez gdb (GNU Debugger) si vous voulez deboguer votre code proprement,
 	et valgrind pour la détection des fuites mémoire.
@@ -55,14 +55,14 @@ DOING - Développer le diffuseur (partie client TCP + multi-diffusion)
 	- Créer une file et un tweet (DONE)
 	- Créer un historique de messages (DONE)
 	- Créer un analyseur syntaxique (parser) (DONE)
-	- (DOING) Gérer la connexion TCP avec la gestion des requêtes client et 
-	  (DOING) le stockage des messages à diffuser.
+	- (DONE) Gérer la connexion TCP avec la gestion des requêtes client et 
+	  (DONE) le stockage des messages à diffuser.
 		- Connexion client TCP à faire. (DONE)
 			- Enregistrement des messages (DONE)
-			- (DOING) Liste des messages diffusées
+			- (DONE) Liste des messages diffusées
 
-	- Gérer la multi-diffusion des messages et leur stockage dans l'historique (TODO)
-		- (TODO) Diffusion du message aux abonnés.
+	- Gérer la multi-diffusion des messages et leur stockage dans l'historique (DOING)
+		- (DOING) Diffusion du message aux abonnés.
 		- (TODO) Sauvegarde des messages envoyés dans l'historique.
 
 TODO - Développer le gestionnaire
