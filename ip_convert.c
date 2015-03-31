@@ -141,9 +141,9 @@ int ip_from15(const char *ip, char *str)
 
 
     /* On copie ces champs dans la chaine */
-    sprintf(str,"%d.%d.%d.%d",field[0],field[1],field[2],field[3]);
+    sprintf(tmp,"%d.%d.%d.%d",field[0],field[1],field[2],field[3]);
 
-    strncpy(str,tmp,strnlen(tmp, MAX_BYTES));
+    strncpy(str,tmp, strlen(tmp));
 
     return 0;
 }
