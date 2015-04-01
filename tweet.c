@@ -31,7 +31,7 @@ void Tweet_init(Tweet *t)
     [DIFF_id_mess] ou bien [OLDM_id_mess]
     Ce message sera le message diffusé
 */
-void Tweet_toString(Tweet *t, char *str,Tweet_state *type)
+void Tweet_toString(const Tweet *t, char *str,Tweet_state *type)
 {
     char space = ' ';
     int len;

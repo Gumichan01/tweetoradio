@@ -59,7 +59,7 @@ Tweet * Stack_pop(Stack *s)
 /*
     Regarde l'élément à la position indiquée par l'index
 */
-Tweet * Stack_peek(Stack *s, unsigned int index)
+Tweet * Stack_peek(Stack *s, const unsigned int index)
 {
     int i;
     Tweet *p = NULL;
@@ -83,15 +83,17 @@ Tweet * Stack_peek(Stack *s, unsigned int index)
 void Stack_display(Stack *s)
 {
     Tweet *t = NULL;
+    Tweet_state st;
     char str[TWEET_LENGTH];
 
     t = s->top;
+    st.etat = 1;
 
     printf("Stack display\n");
 
     while(t != NULL)
     {
-        Tweet_toString(t,str,TWEET_OLDM);
+        Tweet_toString(t,str,&st);
         printf("\n===============================================================\n");
         write(1,str,Tweet_str_length(str));
         printf("\n===============================================================\n");

@@ -42,7 +42,7 @@ typedef struct Tweet_state{
 
 void Tweet_init(Tweet *t);
 
-void Tweet_toString(Tweet *t, char *str,Tweet_state *type);
+void Tweet_toString(const Tweet *t, char *str,Tweet_state *type);
 
 int Tweet_str_length(const char *str);
 
