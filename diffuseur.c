@@ -442,7 +442,7 @@ void * multicast_diffuser(void * param)
     struct addrinfo *res;
 
     char ip_addr[IP_LENGTH+1];
-    char port[PORT_LENGTH +1];
+    char port[PORT_LENGTH];
 
     /* On initialise le multidiffuseur */
 
@@ -475,7 +475,7 @@ void * multicast_diffuser(void * param)
     }
 
     /* On récupère le port proprement */
-    sprintf(port,"%4d",atoi(diff->port_multicast));
+    sprintf(port,"%.4s",diff->port_multicast);
 
 
     err = getaddrinfo(ip_addr,port,&hints,&res);
@@ -489,23 +489,26 @@ void * multicast_diffuser(void * param)
     }
 
     if(res != NULL)
+    {
+
         in = res->ai_addr;
 
-    sz = (socklen_t)sizeof(struct sockaddr);
+        sz = (socklen_t)sizeof(struct sockaddr);
 
-    printf("Multidiffuseur %.8s à l'adresse %s en multidiffusion sur le port : %.4s\n",diff->id,ip_addr,diff->port_multicast);
+        printf("Multidiffuseur %.8s à l'adresse %s en multidiffusion sur le port : %.4s\n",diff->id,ip_addr,diff->port_multicast);
 
-    while(1)
-    {
-        sleep(1);
-        err = sendto(sock_multicast,"IMOK\r\n",6,0,in,sz);
-
-        if(err == -1)
+        while(1)
         {
-            perror("multicast_diffuser - sendto() ");
-        }
-    }
+            sleep(1);
+            err = sendto(sock_multicast,"IMOK\r\n",6,0,in,sz);
 
+            if(err == -1)
+            {
+                perror("multicast_diffuser - sendto() ");
+            }
+        }
+
+    }
     freeaddrinfo(res);
 
     close(sock_multicast);
