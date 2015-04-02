@@ -253,7 +253,7 @@ void * tcp_request(void * param)
         pthread_exit(NULL);
     }
 
-    printf("Message reconnu par le diffuseur et pret à être traité\n\n");
+    printf("tcp_server - Message de %s - %d reconnu par le diffuseur et pret à être traité\n",ip_clt,port);
 
 
     /* On regarde le type de message */
@@ -292,6 +292,7 @@ void * tcp_request(void * param)
 
     }
 
+    printf("tcp_server - Fin tcommunication avec %s - %d | Fermeture connexion.\n",ip_clt,port);
 
     close(sockclt);
     pthread_exit(NULL);
@@ -313,7 +314,7 @@ int registerMSG(ParsedMSG *p)
 
     if(t == NULL)
     {
-        perror("tcp_request - malloc() ");
+        perror("registerMSG - malloc() ");
         return -1;
     }
 
@@ -339,7 +340,7 @@ int registerMSG(ParsedMSG *p)
 
         if(diff->file_attente == NULL)
         {
-            perror("tcp_request - malloc() ");
+            perror("registerMSG - malloc() ");
 
             return -1;
         }
@@ -354,9 +355,9 @@ int registerMSG(ParsedMSG *p)
     Queue_display(diff->file_attente);
 
     /** Lignes à supprimer */
-    Queue_clean_up(diff->file_attente);
+    /*Queue_clean_up(diff->file_attente);
 
-    diff->file_attente = NULL;
+    diff->file_attente = NULL;*/
     /** FIN lignes à supprimer */
 
     return 0;
@@ -446,6 +447,12 @@ void * multicast_diffuser(void * param)
 
     char ip_addr[IP_LENGTH+1];
     char port[PORT_LENGTH];
+    char str[TWEET_LENGTH];
+
+    Tweet * t = NULL;
+    Tweet_state st;
+
+    st.etat = 0;    /* On fixe l'état du tweet en mode DIFF */
 
     /* On initialise le multidiffuseur */
 
@@ -464,7 +471,7 @@ void * multicast_diffuser(void * param)
 
     bzero(&hints,sizeof(struct addrinfo));
 
-    /* On ne veut que que l'UDP IPv4*/
+    /* On ne veut que que l'UDP IPv4 */
     hints.ai_family = AF_INET;
     hints.ai_socktype = SOCK_DGRAM;
 
@@ -483,9 +490,7 @@ void * multicast_diffuser(void * param)
     /* On récupère le port proprement */
     sprintf(port,"%.4s",diff->port_multicast);
 
-
     err = getaddrinfo(ip_addr,port,&hints,&res);
-
 
     if(err != 0)
     {
@@ -505,8 +510,45 @@ void * multicast_diffuser(void * param)
 
         while(1)
         {
-            sleep(1);
-            err = sendto(sock_multicast,"IMOK\r\n",6,0,in,sz);
+            sleep(8);
+
+            /* On récupère le prochain tweet à diffuser */
+            pthread_mutex_lock(&verrouQ);
+            t = Queue_pop(diff->file_attente);
+            pthread_mutex_unlock(&verrouQ);
+
+            if(t == NULL)
+            {
+                continue;   /* On n'a rien à afficher, on revient en début de boucle */
+            }
+            else
+            {
+                Tweet_toString(t,str,&st);
+
+                printf("Multidiffuseur %.8s - Nouveau tweet à diffuser :\n",diff->id);
+                printf("Multidiffuseur %.8s - ",diff->id);
+                fflush(stdout);
+
+                write(1,str,Tweet_str_length(str));
+                fflush(stdout);
+                printf("\n");
+            }
+
+            pthread_mutex_lock(&verrouH);
+            err = sauvegarderTweet(t);
+            pthread_mutex_unlock(&verrouH);
+
+            if(err == -1)
+            {
+                printf("Multidiffuseur %.8s - Echec de la sauvegarde du tweet\n",diff->id);
+            }
+            else
+            {
+                printf("Multidiffuseur %.8s - Tweet diffusé sauvegardé avec succes\n",diff->id);
+                t = NULL;
+            }
+
+            err = sendto(sock_multicast,str,TWEET_LENGTH,0,in,sz);
 
             if(err == -1)
             {
@@ -515,15 +557,41 @@ void * multicast_diffuser(void * param)
         }
 
     }
-    freeaddrinfo(res);
 
+    freeaddrinfo(res);
     close(sock_multicast);
 
     pthread_exit(NULL);
 }
 
 
+int sauvegarderTweet(Tweet *t)
+{
+    if(t == NULL)
+    {
+        return -1;
+    }
 
+    if(diff->historique == NULL)
+    {
+        diff->historique = malloc(sizeof(Stack));
+
+        if(diff->historique == NULL)
+        {
+            perror("sauvegarderTweet - malloc() ");
+            return -1;
+        }
+        else
+        {
+            Stack_init(diff->historique);
+        }
+
+    }
+
+    Stack_push(diff->historique,t);
+
+    return 0;
+}
 
 
 

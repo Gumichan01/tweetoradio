@@ -49,9 +49,9 @@ Quelques consignes :
  - On travaillera sur Git (Pas de dropbox ou de courriel ou je ne sais quoi !! On est des geeks :) !!)
 
 
-Les étapes seront les suivants:
+Les étapes seront les suivants :
 
-DOING - Développer le diffuseur (partie client TCP + multi-diffusion)
+TODO - Développer le diffuseur (partie client TCP + multi-diffusion)
 	- Créer une file et un tweet (DONE)
 	- Créer un historique de messages (DONE)
 	- Créer un analyseur syntaxique (parser) (DONE)
@@ -61,9 +61,9 @@ DOING - Développer le diffuseur (partie client TCP + multi-diffusion)
 			- Enregistrement des messages (DONE)
 			- (DONE) Liste des messages diffusées
 
-	- Gérer la multi-diffusion des messages et leur stockage dans l'historique (DOING)
-		- (DOING) Diffusion du message aux abonnés.
-		- (TODO) Sauvegarde des messages envoyés dans l'historique.
+	- Gérer la multi-diffusion des messages et leur stockage dans l'historique (DONE)
+		- (DONE) Diffusion du message aux abonnés.
+		- (DONE) Sauvegarde des messages envoyés dans l'historique.
 
 TODO - Développer le gestionnaire
 	- Demande d'enregistrement du diffuseur (TODO)
@@ -72,8 +72,10 @@ TODO - Développer le gestionnaire
 TODO - Etablir la communication entre l'utilisateur et le gestionnaire
 	- Demande de la liste des diffuseurs actifs (TODO)
 
-Extensions possibles : 
+
+Extensions possibles :
 
  - Partage de fichier 
+ - Commande d'administration d'un diffuseur et/ou d'un gestionnaire
  - Extinction propre du système
  - Des suggestions ?

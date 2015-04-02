@@ -59,6 +59,13 @@ Tweet * Queue_pop(Queue *q)
         if(q->head != NULL)
         {
             r = q->head;
+
+            /* Dans le cas où j'ai la tête qui est aussi la queue */
+            if(q->head == q->tail)
+            {
+                q->tail = NULL;
+            }
+
             q->head = q->head->next;
             r->next = NULL;
 
