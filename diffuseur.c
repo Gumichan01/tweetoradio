@@ -15,9 +15,10 @@
 #include "parser.h"
 
 
-extern Diffuseur *diff;    /* Le diffuseur utilisé dan le main */
+extern Diffuseur *diff;    /* Le diffuseur utilisé dans le main */
 
-static pthread_mutex_t verrou = PTHREAD_MUTEX_INITIALIZER;
+static pthread_mutex_t verrouQ = PTHREAD_MUTEX_INITIALIZER;
+static pthread_mutex_t verrouH = PTHREAD_MUTEX_INITIALIZER;
 
 static int num_mess = 0;
 
@@ -255,13 +256,13 @@ void * tcp_request(void * param)
     printf("Message reconnu par le diffuseur et pret à être traité\n\n");
 
 
-    pthread_mutex_lock(&verrou);
-
     /* On regarde le type de message */
     switch(p.msg_type)
     {
         case MESS : {
+                        pthread_mutex_lock(&verrouQ);
                         err = registerMSG(&p);
+                        pthread_mutex_unlock(&verrouQ);
 
                         if(err != -1)
                         {   /* Pas de problème, on envoie l'accusé */
@@ -270,14 +271,17 @@ void * tcp_request(void * param)
                     }
                     break;
 
-        case LAST : err = envoiMessagesHisto(&p,sockclt);
+        case LAST : {
+                        pthread_mutex_lock(&verrouH);
+                        err = envoiMessagesHisto(&p,sockclt);
+                        pthread_mutex_unlock(&verrouH);
+                    }
                     break;
 
         default :  err = 0;
                     break;
     }
 
-    pthread_mutex_unlock(&verrou);
 
 
     if(err == -1)
