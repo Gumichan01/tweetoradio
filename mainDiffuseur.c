@@ -57,7 +57,6 @@ int main(int argc, char **argv)
     pthread_create(&thread_multi,NULL,multicast_diffuser,NULL);
 
     pthread_join(thread,NULL);
-    pthread_join(thread_multi,NULL);
 
     free(diff);
 

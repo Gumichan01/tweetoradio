@@ -92,7 +92,6 @@ void * tcp_server(void *param)
 
     memset(&in, 0, sizeof(struct sockaddr));    /* Nettoyage */
 
-
     sockserv = socket(PF_INET,SOCK_STREAM,0);
 
     if(sockserv == -1)
@@ -445,6 +444,9 @@ void * multicast_diffuser(void * param)
     char port[PORT_LENGTH];
 
     /* On initialise le multidiffuseur */
+
+    /* On rend le thread indépendant */
+    pthread_detach(pthread_self());
 
     printf("Multidiffuseur %.8s : %.15s %.4s\n",diff->id,diff->ip_multicast,diff->port_multicast);
 
