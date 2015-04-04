@@ -51,7 +51,7 @@ int parse(const char *str, ParsedMSG * p)
     {
 
         p->msg_type = MESS;
-        err = sscanf(str,"MESS%c%8[a-zA-Z0-9_-]%c%140[a-zA-Z0-9?.,;:!/*-+ _#]\r\n",&sp1,p->id,&sp2,p->mess);
+        err = sscanf(str,"MESS%c%8[a-zA-Z0-9_-]%c%140[a-zA-Z0-9?'\".,;:!/*-+ _#&àâäéèîï`ôöüù%%@ç]\r\n",&sp1,p->id,&sp2,p->mess);
 
         if(err > 0 && sp1 == space && sp2 == space)
         {

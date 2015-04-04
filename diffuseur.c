@@ -227,7 +227,7 @@ void * tcp_request(void * param)
     /* message trop court ou n'ayant pas le couple '\r''\n' -> INVALIDE */
     if(lus < 2 || msg[lus-1] != '\n' || msg[lus-2] != '\r')
     {
-        printf("Message invalide issue du client %s %d \n",ip_clt,port);
+        printf("Message invalide issue du client %s - %d | Fermeture connexion.\n\n",ip_clt,port);
 
         close(sockclt);
         pthread_exit(NULL);

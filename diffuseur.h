@@ -13,7 +13,7 @@ struct Stack;
 
 
 
-#define NB_CLIENTS 5
+#define NB_CLIENTS 1024
 
 
 typedef struct Diffuseur{
