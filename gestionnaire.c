@@ -7,14 +7,36 @@
 
 #include "gestionnaire.h"
 
+
 extern Gestionnaire *gest;
+
 
 void Gestionnaire_init(Gestionnaire *g)
 {
+	int i;
+
 	memset(g->ip_local, '0', IP_LENGTH);
 	memset(g->port_local, '0', PORT_LENGTH);
 
+    /* Initialisation des diffuseurs */
+    for(i = 0; i < MAX_SLOT; i++)
+    {
+        DiffuseurInfo_init(&g->slot[i]);
+    }
 }
+
+
+void DiffuseurInfo_init(DiffuseurInfo * d)
+{
+    memset(d->id,'#',ID_LENGTH);
+
+    memset(d->ip_multicast,'0',IP_LENGTH);
+    memset(d->port_multicast,'0',PORT_LENGTH);
+
+    memset(d->ip_local,'0',IP_LENGTH);
+    memset(d->port_local,'0',PORT_LENGTH);
+}
+
 
 /*
 * Enregistrement d'un diffuseur

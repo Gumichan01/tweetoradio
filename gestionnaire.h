@@ -6,16 +6,34 @@
 #include "diffuseur.h"
 
 
+
+typedef struct DiffuseurInfo{
+
+    char id[ID_LENGTH];
+
+    char ip_multicast[IP_LENGTH];
+    char port_multicast[PORT_LENGTH];
+
+    char ip_local[IP_LENGTH];
+    char port_local[PORT_LENGTH];
+
+
+}DiffuseurInfo;
+
+
 typedef struct Gestionnaire{
 
 	char ip_local[IP_LENGTH];
 	char port_local[PORT_LENGTH];
-	Diffuseur slot[MAX_SLOT];
+	DiffuseurInfo slot[MAX_SLOT];
 
 }Gestionnaire;
 
 
+
 void Gestionnaire_init(Gestionnaire *g);
+
+void DiffuseurInfo_init(DiffuseurInfo *d);
 
 void * register_diffuseur(void *param);
 

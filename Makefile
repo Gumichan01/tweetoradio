@@ -38,7 +38,7 @@ mainDiffuseur.o : mainDiffuseur.c
 	$(CC) -o $@ -c $< $(CFLAGS)
 
 
-$(EXEC_GEST) : gestionnaire.o mainGestionnaire.o
+$(EXEC_GEST) : gestionnaire.o  mainGestionnaire.o
 	$(CC) -o $(EXEC_GEST) $^ $(LFLAGS)
 
 gestionnaire.o : gestionnaire.c gestionnaire.h
