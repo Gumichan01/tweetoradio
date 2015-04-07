@@ -65,7 +65,7 @@ TODO - Développer le diffuseur (partie client TCP + multi-diffusion)
 		- (DONE) Diffusion du message aux abonnés.
 		- (DONE) Sauvegarde des messages envoyés dans l'historique.
 
-TODO - Développer le gestionnaire
+DOING - Développer le gestionnaire
 	- Demande d'enregistrement du diffuseur (TODO)
 	- Interrogation du gestionnaire sur l'activité des diffuseurs (TODO)
 
