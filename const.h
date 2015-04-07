@@ -24,6 +24,8 @@
 #define MAX_NUM_MESSAGE 9999    /* Identifiant max du message */
 #define MIN_NUM_MESSAGE 0       /* Identifiant min du message */
 
+#define MAX_SLOT 10             /* Identifiant max du slot */
+
 
 #endif /* CONST_INCLUDED_H */
 
