@@ -12,7 +12,6 @@
 #include "queue.h"
 #include "stack.h"
 #include "ip_convert.h"
-#include "parser.h"
 
 
 extern Diffuseur *diff;    /* Le diffuseur utilisé dans le main */
