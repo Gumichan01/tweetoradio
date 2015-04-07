@@ -509,7 +509,7 @@ void * multicast_diffuser(void * param)
 
         while(1)
         {
-            sleep(8);
+            sleep(SLEEP_TIME);
 
             /* On récupère le prochain tweet à diffuser */
             pthread_mutex_lock(&verrouQ);

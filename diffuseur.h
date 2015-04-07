@@ -14,6 +14,7 @@ struct Stack;
 
 
 #define NB_CLIENTS 1024
+#define SLEEP_TIME 8
 
 
 typedef struct Diffuseur{

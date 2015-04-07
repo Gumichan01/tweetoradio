@@ -23,9 +23,9 @@ int main(int argc, char **argv)
     pthread_t thread_multi;
 
 
-    if(argc < 6)
+    if(argc < 5)
     {
-        fprintf(stderr,"usage : %s <ID> <IP_MULTICAST> <PORT_MULTICAST> <IP_LOCAL_TCP> <PORT_LOCAL_TCP> \n", basename(argv[0]));
+        fprintf(stderr,"usage : %s <ID> <IP_MULTICAST> <PORT_MULTICAST> <PORT_LOCAL_TCP> \n", basename(argv[0]));
         return EXIT_FAILURE;
     }
 
@@ -50,7 +50,7 @@ int main(int argc, char **argv)
     ip_to15(argv[2],diff->ip_multicast);
     strncpy(diff->port_multicast,argv[3],PORT_LENGTH);
 
-    strncpy(diff->port_local,argv[5],PORT_LENGTH);
+    strncpy(diff->port_local,argv[4],PORT_LENGTH);
 
 
     pthread_create(&thread,NULL,tcp_server,NULL);
