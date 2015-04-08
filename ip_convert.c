@@ -66,7 +66,7 @@ int ip_to15(const char *ip, char *str)
         }
 
         /* Ok, c'est valide ( 0 <= field[i] <= 255 ) */
-        if(field[i] > 100)          /* On a 3 chiffres dans le nombre */
+        if(field[i] > 99)          /* On a 3 chiffres dans le nombre */
         {
             sprintf(cfield[i],"%d",field[i]);
         }
