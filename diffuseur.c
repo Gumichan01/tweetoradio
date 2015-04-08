@@ -76,7 +76,7 @@ int int_to_char(int n,char *str)
 
 void * tcp_server(void *param)
 {
-    /** TODO création serveur TCP pour reception du client */
+
     int err;
     int sockserv;
     int sockclt;
