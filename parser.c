@@ -96,7 +96,7 @@ int parse(const char *str, ParsedMSG * p)
         }
 
     }
-    else if(!strncmp(str,"REGI",4))     /* Recevoir la liste de diffuseurs */
+    else if(!strncmp(str,"REGI",4))     /* Recevoir la demande d'enregistrement d'un diffuseur */
     {
         /* L'analyse de la chaine à entête REGI echoue-telle ? */
         if(parseREGI(str,p) == -1)
