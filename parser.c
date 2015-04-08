@@ -110,6 +110,11 @@ int parse(const char *str, ParsedMSG * p)
         p->msg_type = IMOK;
         err = 1;
     }
+    else if(!strncmp(str,"RUOK\r\n",6) )     /* Diffuseur toujours actif ? */
+    {
+        p->msg_type = RUOK;
+        err = 1;
+    }
     else
     {
         errno = EINVAL;
