@@ -115,6 +115,21 @@ int parse(const char *str, ParsedMSG * p)
         p->msg_type = RUOK;
         err = 1;
     }
+    else if(!strncmp(str,"REOK\r\n",6) )     /* Enregistrement du diffuseur OK */
+    {
+        p->msg_type = REOK;
+        err = 1;
+    }
+    else if(!strncmp(str,"RENO\r\n",6) )     /* Impossible d'enregistrer le diffuseur */
+    {
+        p->msg_type = RENO;
+        err = 1;
+    }
+    else if(!strncmp(str,"LIST\r\n",6) )     /* Demande liste des diffuseurs */
+    {
+        p->msg_type = RENO;
+        err = 1;
+    }
     else
     {
         errno = EINVAL;
