@@ -7,6 +7,7 @@
 
 #include "const.h"
 #include "parser.h"
+#include "tweet.h"
 
 struct Queue;
 struct Stack;

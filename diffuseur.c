@@ -543,7 +543,6 @@ void * multicast_diffuser(void * param)
             }
             else
             {
-                printf("Multidiffuseur %.8s - Tweet diffusé sauvegardé avec succes\n",diff->id);
                 t = NULL;
             }
 
@@ -553,6 +552,9 @@ void * multicast_diffuser(void * param)
             {
                 perror("multicast_diffuser - sendto() ");
             }
+            else
+                printf("Multidiffuseur %.8s - %d octets envoyés \n",diff->id,err);
+
         }
 
     }
