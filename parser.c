@@ -105,8 +105,9 @@ int parse(const char *str, ParsedMSG * p)
             err = 1;
 
     }
-    else if(!strncmp(str,"IMOK\r\n",6))     /* Diffuseur OK */
+    else if(!strncmp(str,"IMOK\r\n",6) )     /* Diffuseur OK */
     {
+        p->msg_type = IMOK;
         err = 1;
     }
     else
