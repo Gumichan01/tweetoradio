@@ -1,6 +1,6 @@
 
 
-#include "tweet.h"
+#include "const.h"
 
 #ifndef PARSER_INCLUDED_H
 #define PARSER_INCLUDED_H
@@ -8,6 +8,10 @@
 
 #define MAX_NB_MESS 999     /* Nombre max de messages affichables dans l'historique */
 #define MIN_NB_MESS 0       /* Nombre min de messages affichables dans l'historique */
+#define MAX_PORT_VALUE 9999
+#define MIN_PORT_VALUE 0
+#define IPV4_MAX 255
+#define IPV4_MIN 0
 
 
 /*
@@ -32,7 +36,7 @@
         ne sera pas intégrée.
 
 */
-typedef enum{MESS,LAST,REOK,RENO,RUOK,IMOK,LIST,NO_TYPE} ReceivedMSG_type;
+typedef enum{MESS,LAST,REGI,REOK,RENO,RUOK,IMOK,LIST,NO_TYPE} ReceivedMSG_type;
 
 
 /*
@@ -69,6 +73,8 @@ typedef struct ParsedMSG{
 void ParserMSG_init(ParsedMSG *p);
 
 int parse(const char *str, ParsedMSG * p);
+
+int parseREGI(const char *str, ParsedMSG *p);
 
 
 
