@@ -23,8 +23,8 @@ typedef struct DiffuseurInfo{
 
 typedef struct Gestionnaire{
 
-	char ip_local[IP_LENGTH];
-	char port_local[PORT_LENGTH];
+	char ip_addr[IP_LENGTH];
+	char port[PORT_LENGTH];
 	DiffuseurInfo slot[MAX_SLOT];
 
 }Gestionnaire;

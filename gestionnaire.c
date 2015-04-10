@@ -15,8 +15,8 @@ void Gestionnaire_init(Gestionnaire *g)
 {
 	int i;
 
-	memset(g->ip_local, '0', IP_LENGTH);
-	memset(g->port_local, '0', PORT_LENGTH);
+	memset(g->ip_addr, '0', IP_LENGTH);
+	memset(g->port, '0', PORT_LENGTH);
 
     /* Initialisation des diffuseurs */
     for(i = 0; i < MAX_SLOT; i++)
