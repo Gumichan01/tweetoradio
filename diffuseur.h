@@ -1,5 +1,9 @@
 
 
+/**
+    Ce fichier définit l'ensemble des variables, structures
+    et fonctions relatives au fonctionnement du diffuseur
+*/
 
 #ifndef DIFFUSEUR_INCLUDED_H
 #define DIFFUSEUR_INCLUDED_H
@@ -36,6 +40,10 @@ typedef struct Diffuseur{
 
 
 
+/*
+    Rassemble les informations sur le client
+    communicant avec le diffuseur en TCP
+*/
 typedef struct Client_info{
 
     char ip[IP_LENGTH+1];
@@ -43,6 +51,20 @@ typedef struct Client_info{
     int sockclt;
 
 }Client_info;
+
+
+
+/*
+    Rassemble les informations sur le gestionnaire
+    auprès duquel le diffuseur s'inscrit
+*/
+typedef struct Gest_info{
+
+    char ip[IP_LENGTH+1];
+    int port;
+
+}Gest_info;
+
 
 
 
@@ -63,6 +85,8 @@ int envoiMessagesHisto(ParsedMSG *p, int sockclt);
 void * multicast_diffuser(void * param);
 
 int sauvegarderTweet(Tweet *t);
+
+void * inscription(void * param);
 
 
 #endif /* DIFFUSEUR_INCLUDED_H */

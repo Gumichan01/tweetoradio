@@ -37,6 +37,10 @@ void Diffuseur_init(Diffuseur *d)
 }
 
 
+/*
+    Convertit un entier associé au numéro de message
+    en chaine de caractères sans '\0'
+*/
 int int_to_char(int n,char *str)
 {
     char tmp[NUM_MESS_LENGTH+1];
@@ -73,7 +77,9 @@ int int_to_char(int n,char *str)
 }
 
 
-
+/*
+    Gère le serveur TCP
+*/
 void * tcp_server(void *param)
 {
 
@@ -148,7 +154,7 @@ void * tcp_server(void *param)
                 break;
             }
 
-            printf("Client connecté - IP : %s | Port : %d \n",inet_ntoa(clt.sin_addr),ntohs(clt.sin_port));
+            printf("\nClient connecté - IP : %s | Port : %d \n",inet_ntoa(clt.sin_addr),ntohs(clt.sin_port));
 
             /* On crée une structure relative au client */
             clt_info = malloc(sizeof(Client_info));
@@ -166,7 +172,7 @@ void * tcp_server(void *param)
                 continue;
             }
 
-            /* On récupère les information sur le client */
+            /* On récupère les informations sur le client */
             strcpy(clt_info->ip,inet_ntoa(clt.sin_addr));
             clt_info->port = ntohs(clt.sin_port);
             clt_info->sockclt = sockclt;
@@ -291,14 +297,16 @@ void * tcp_request(void * param)
 
     }
 
-    printf("tcp_server - Fin tcommunication avec %s - %d | Fermeture connexion.\n",ip_clt,port);
+    printf("tcp_server - Fin communication avec %s - %d | Fermeture connexion.\n",ip_clt,port);
 
     close(sockclt);
     pthread_exit(NULL);
 }
 
 
-
+/*
+    Met un message en attente de diffusion dans la liste d'attente
+*/
 int registerMSG(ParsedMSG *p)
 {
     Tweet *t = NULL;
@@ -351,14 +359,6 @@ int registerMSG(ParsedMSG *p)
 
     Queue_push(diff->file_attente,t);
 
-    Queue_display(diff->file_attente);
-
-    /** Lignes à supprimer */
-    /*Queue_clean_up(diff->file_attente);
-
-    diff->file_attente = NULL;*/
-    /** FIN lignes à supprimer */
-
     return 0;
 }
 
@@ -368,9 +368,9 @@ void envoiAccuse(int sockclt)
 {
     char ok_msg[] = "ACKM\r\n";
 
-    if(send(sockclt,ok_msg,strlen(ok_msg),0) == -1 )
+    if(send(sockclt,ok_msg,strlen(ok_msg),MSG_NOSIGNAL) == -1 )
     {
-        perror("envoiAccuse - send : ");
+        perror("envoiAccuse - send() : ");
     }
 
 }
@@ -413,7 +413,7 @@ int envoiMessagesHisto(ParsedMSG *p, int sockclt)
 
             Tweet_toString(t,str,&st);
 
-            err = send(sockclt,str,TWEET_LENGTH,0);
+            err = send(sockclt,str,TWEET_LENGTH,MSG_NOSIGNAL);
 
             if(err == -1)
             {
@@ -426,13 +426,20 @@ int envoiMessagesHisto(ParsedMSG *p, int sockclt)
     }
 
     /* Fin de message */
-    send(sockclt,end_msg,strlen(end_msg),0);
+    err = send(sockclt,end_msg,strlen(end_msg),MSG_NOSIGNAL);
+
+    if(err == -1)
+    {
+        perror("envoiMessagesHisto - send() ");
+    }
 
     return 0;
 }
 
 
-
+/*
+    Effectue la multidiffusion
+*/
 void * multicast_diffuser(void * param)
 {
     int err;
@@ -458,7 +465,6 @@ void * multicast_diffuser(void * param)
     /* On rend le thread indépendant */
     pthread_detach(pthread_self());
 
-    printf("Multidiffuseur %.8s : %.15s %.4s\n",diff->id,diff->ip_multicast,diff->port_multicast);
 
     sock_multicast = socket(PF_INET,SOCK_DGRAM,0);
 
@@ -470,7 +476,7 @@ void * multicast_diffuser(void * param)
 
     bzero(&hints,sizeof(struct addrinfo));
 
-    /* On ne veut que que l'UDP IPv4 */
+    /* On ne veut que l'UDP IPv4 */
     hints.ai_family = AF_INET;
     hints.ai_socktype = SOCK_DGRAM;
 
@@ -505,11 +511,14 @@ void * multicast_diffuser(void * param)
 
         sz = (socklen_t)sizeof(struct sockaddr);
 
-        printf("Multidiffuseur %.8s à l'adresse %s en multidiffusion sur le port : %.4s\n",diff->id,ip_addr,diff->port_multicast);
+        printf("Multidiffuseur %.8s @%s en multidiffusion sur le port : %.4s\n",diff->id,ip_addr,diff->port_multicast);
 
         while(1)
         {
             sleep(SLEEP_TIME);
+
+            if(diff->file_attente != NULL && diff->file_attente->head != NULL)
+                Queue_display(diff->file_attente);
 
             /* On récupère le prochain tweet à diffuser */
             pthread_mutex_lock(&verrouQ);
@@ -539,7 +548,7 @@ void * multicast_diffuser(void * param)
 
             if(err == -1)
             {
-                printf("Multidiffuseur %.8s - Echec de la sauvegarde du tweet\n",diff->id);
+                fprintf(stderr,"Multidiffuseur %.8s - Echec de la sauvegarde du tweet\n",diff->id);
             }
             else
             {
@@ -552,8 +561,6 @@ void * multicast_diffuser(void * param)
             {
                 perror("multicast_diffuser - sendto() ");
             }
-            else
-                printf("Multidiffuseur %.8s - %d octets envoyés \n",diff->id,err);
 
         }
 
@@ -566,6 +573,9 @@ void * multicast_diffuser(void * param)
 }
 
 
+/*
+    Sauvegarde un tweet diffusé en le mettant dans l'historique
+*/
 int sauvegarderTweet(Tweet *t)
 {
     if(t == NULL)
@@ -593,6 +603,154 @@ int sauvegarderTweet(Tweet *t)
 
     return 0;
 }
+
+
+/*
+    Inscrit le diffuseur courant dans le gestionnaire
+    mis en paramètre
+*/
+void * inscription(void * param)
+{
+    Gest_info *g = (Gest_info *) param;
+    ParsedMSG p;
+
+    int sock;
+    struct sockaddr_in in;
+
+    int err, sz;
+    int lus, inscrit = 0;
+    char msg[REGI_LENGTH];
+
+    ParserMSG_init(&p);
+
+    sock = socket(PF_INET,SOCK_STREAM,0);
+
+    if(sock == -1)
+    {
+        perror("inscription - socket() ");
+        pthread_exit(NULL);
+    }
+
+    in.sin_family = AF_INET;
+    in.sin_port = htons(g->port);
+
+    if(inet_aton(g->ip,&in.sin_addr) == 0)
+    {
+        perror("inscription - inet_aton() ");
+        close(sock);
+        pthread_exit(NULL);
+    }
+
+    sz = sizeof(in);
+
+
+    err = connect(sock, (struct sockaddr *) &in,sz);
+
+    if(err == -1)
+    {
+        perror("inscription - connect() ");
+        close(sock);
+        pthread_exit(NULL);
+    }
+
+    sprintf(msg,"REGI %.15s %.4s %.15s %.4s\r\n",diff->ip_multicast,diff->port_multicast,
+                                                    diff->ip_local,diff->port_local);
+
+    err = send(sock,msg,strlen(msg),MSG_NOSIGNAL);
+
+    if(err == -1)
+    {
+        perror("inscription - send() ");
+        close(sock);
+        pthread_exit(NULL);
+    }
+
+    memset(msg,0,REGI_LENGTH);
+
+    lus = recv(sock,msg,HEADER_MSG,0);
+
+    if(lus == -1)
+    {
+        perror("inscription - recv() ");
+        close(sock);
+        pthread_exit(NULL);
+    }
+
+    err = parse(msg,&p);
+
+    if(err == -1)
+    {
+        perror("inscription - parse() ");
+        close(sock);
+        pthread_exit(NULL);
+    }
+
+    switch(p.msg_type)
+    {
+        case REOK : printf("Multidiffuseur %.8s : Inscription OK \n",diff->id);
+                    inscrit = 1;
+                    break;
+
+        case RENO : fprintf(stderr,"Multidiffuseur %.8s : Impossible de s'inscrire auprès du gestionnaire - %s %d\n",
+                                                                    diff->id,g->ip,g->port);
+                    break;
+
+        default: break;
+    }
+
+    if(inscrit)
+    {
+        while(1)
+        {
+            lus = recv(sock,msg,HEADER_MSG,0);
+
+            if(lus == -1)
+            {
+                perror("inscription LOOP - recv() ");
+                break;
+            }
+
+
+            if(parse(msg,&p) == -1)     /* Message connu ? */
+            {
+                perror("inscription LOOP - parse() ");
+                break;
+            }
+
+            if(p.msg_type == RUOK)
+            {
+                err = send(sock,"IMOK\r\n",HEADER_MSG,MSG_NOSIGNAL);
+
+                if(err == -1)
+                {
+                    perror("inscription LOOP - send() ");
+                    break;
+                }
+            }
+            else
+                break;
+        }
+    }
+
+
+    close(sock);
+
+    pthread_exit(NULL);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

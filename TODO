@@ -19,6 +19,11 @@ Contraintes :
 
  - Il faut respecter l'ensemble des spécifications indiquées dans le projet
 
+ - L'ordre de développement des programme est le suivant : 
+	- Diffuseur
+	- Gestionnaire
+	- Client
+
  - Pour éviter un possible problème sur les machines de l'ufr, dans le cadre
 	de l'utilisation du C, on adoptera le C ANSI strict (C89) comme norme.
 
@@ -51,7 +56,7 @@ Quelques consignes :
 
 Les étapes seront les suivants :
 
-TODO - Développer le diffuseur (partie client TCP + multi-diffusion)
+DONE - [Luxon] Développer le diffuseur (partie client TCP + multi-diffusion)
 	- Créer une file et un tweet (DONE)
 	- Créer un historique de messages (DONE)
 	- Créer un analyseur syntaxique (parser) (DONE)
@@ -60,18 +65,19 @@ TODO - Développer le diffuseur (partie client TCP + multi-diffusion)
 		- Connexion client TCP à faire. (DONE)
 			- Enregistrement des messages (DONE)
 			- (DONE) Liste des messages diffusées
+	- Enregistrement d'un diffuseur (DONE)
 
 	- Gérer la multi-diffusion des messages et leur stockage dans l'historique (DONE)
 		- (DONE) Diffusion du message aux abonnés.
 		- (DONE) Sauvegarde des messages envoyés dans l'historique.
 
 DOING - Développer le gestionnaire
-	- Demande d'enregistrement du diffuseur (TODO)
-	- Interrogation du gestionnaire sur l'activité des diffuseurs (TODO)
+	- [Pierre] Demande d'enregistrement du diffuseur (DOING)
+	- [Cyrille ou Pierre] Interrogation du gestionnaire sur l'activité des diffuseurs (TODO)
 
-TODO - Etablir la communication entre l'utilisateur et le gestionnaire
-	- Demande de la liste des diffuseurs actifs (TODO)
-
+TODO - [Cyrille] Etablir la communication entre l'utilisateur et le gestionnaire
+	- (TODO) Gérer les requêtes utilisateurs
+	- (TODO) Créer un programme client
 
 Extensions possibles :
 
