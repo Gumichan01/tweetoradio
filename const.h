@@ -20,6 +20,10 @@
 #define PORT_LENGTH 4           /* La taille du numéro de port */
 
 #define TWEET_LENGTH ( TYPE_LENGTH + NUM_MESS_LENGTH + ID_LENGTH + MSG_LENGTH + 3 + 2 )
+#define REGI_LENGTH ( TYPE_LENGTH + ID_LENGTH + IP_LENGTH + PORT_LENGTH + IP_LENGTH + PORT_LENGTH + 5 + 2 )
+
+#define HEADER_TXT 4            /* Taille de l'entête du message */
+#define HEADER_MSG 6            /* Taille du message entête */
 
 #define MAX_NUM_MESSAGE 9999    /* Identifiant max du message */
 #define MIN_NUM_MESSAGE 0       /* Identifiant min du message */

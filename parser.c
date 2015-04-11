@@ -105,27 +105,27 @@ int parse(const char *str, ParsedMSG * p)
             err = 1;
 
     }
-    else if(!strncmp(str,"IMOK\r\n",6) )     /* Diffuseur OK */
+    else if(!strncmp(str,"IMOK\r\n",HEADER_MSG) )     /* Diffuseur OK */
     {
         p->msg_type = IMOK;
         err = 1;
     }
-    else if(!strncmp(str,"RUOK\r\n",6) )     /* Diffuseur toujours actif ? */
+    else if(!strncmp(str,"RUOK\r\n",HEADER_MSG) )     /* Diffuseur toujours actif ? */
     {
         p->msg_type = RUOK;
         err = 1;
     }
-    else if(!strncmp(str,"REOK\r\n",6) )     /* Enregistrement du diffuseur OK */
+    else if(!strncmp(str,"REOK\r\n",HEADER_MSG) )     /* Enregistrement du diffuseur OK */
     {
         p->msg_type = REOK;
         err = 1;
     }
-    else if(!strncmp(str,"RENO\r\n",6) )     /* Impossible d'enregistrer le diffuseur */
+    else if(!strncmp(str,"RENO\r\n",HEADER_MSG) )     /* Impossible d'enregistrer le diffuseur */
     {
         p->msg_type = RENO;
         err = 1;
     }
-    else if(!strncmp(str,"LIST\r\n",6) )     /* Demande liste des diffuseurs */
+    else if(!strncmp(str,"LIST\r\n",HEADER_MSG) )     /* Demande liste des diffuseurs */
     {
         p->msg_type = LIST;
         err = 1;
