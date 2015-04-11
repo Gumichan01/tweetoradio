@@ -9,6 +9,8 @@ EXEC_DIFF=ex_diff
 EXEC_GEST=ex_gest
 EXEC_CLT=
 
+
+
 # On construit tout
 all : $(EXEC_DIFF) $(EXEC_GEST) $(EXEC_CLT)
 
@@ -38,6 +40,8 @@ mainDiffuseur.o : mainDiffuseur.c
 	$(CC) -o $@ -c $< $(CFLAGS)
 
 
+
+# On construit l'executable du gestionnaire
 $(EXEC_GEST) : gestionnaire.o  mainGestionnaire.o
 	$(CC) -o $(EXEC_GEST) $^ $(LFLAGS)
 
@@ -47,8 +51,19 @@ gestionnaire.o : gestionnaire.c gestionnaire.h
 mainGestionnaire.o : mainGestionnaire.c
 	$(CC) -o $@ -c $< $(CFLAGS)
 
+
+
+
+# Suppresions
 cleanobj : 
 	rm -rf *.o
 
 cleanall : 
 	rm -rf *.o $(EXEC_DIFF) $(EXEC_GEST)
+
+
+
+# On refait toute la construction
+
+
+reboot : cleanall all

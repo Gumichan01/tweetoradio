@@ -17,11 +17,106 @@ Groupe :
  Licence 3 Informatique
 
 
-Compilation :
+== Compilation ==
+
+ - Pour compiler le programme, executer la commande suivante :
+	$ make
+
+ Pour gagner un peu de temps à la compilation, vous pouver utiliser les options -r et -j
+	$ make -r -j
+
+ - Pour effacer les fichiers intermediares :
+	$ make cleanobj
+
+ - Pour tout effacer :
+	$ make cleanall 
+
+ - Pour relancer la compilation depuis le début :
+	$ make reboot
+
+
+
+== Utilisation ==
+
+ Lancer le diffuseur : 
+
+	$ ./ex_diff <ID_RADIO> <IP_MULTICAST> <PORT_MULTICAST> <PORT_MACHINE_TCP> <GEST_IP> <GEST_PORT>
+
+ <ID_RADIO>		: Identifiant de la radio (l'id du diffuseur)
+ <IP_MULTICAST> 	: Adresse IP pour la multidiffusion
+ <PORT_MULTICAST> 	: Port de multidiffusion
+ <PORT_MACHINE_TCP> 	: Port du diffuseur en connexion TCP
+ <GEST_IP> 		: Adresse IP du gestionnaire auprès de qui s'enregistrer
+ <GEST_PORT> 		: Port du gestionnaire
+
+ Exemple : 
+
+	./ex_diff RADIO 228.0.2.1 4098 2409 127.0.0.1 2407
+
+
+
+== Extensions  ==
 
 #A venir
 
 
-Utilisation :
 
-#A venir
+== Problèmes rencontrés  ==
+
+ I/ Effet de bord et corruption mémoire
+
+ Dans la structure ParsedMSG, nous avions défini un tyoe énumeré 
+ Tweet_type concernant le type d'un tweet de la manière suivante :
+
+ - NO_TYPE : Pas de type défini (le type par défaut)
+ - DIFF : Tweet destiné à la diffusion
+ - OLDM : Tweet sauvegardé dans l'historique
+
+ Ce type énuméré était surtout utilisé dans le cas où l'on devait génerer
+ une chaine de caractère associée à la structure Tweet.
+ Selon le type de de la requête du client (MESS ou LAST), l'entête du message 
+ serait "DIFF", si le Tweet saisi par le client est en attente de diffusion,
+ ou bien "OLDM" si l'utilisateur veut les messages de l'historique. 
+
+ Le problème avait lieu au moment de l'appel de la fonction parse().
+ En effet, bien que le champs tweet_type de la structure ParsedMSG soit fixé
+ à l'énumération associée à la requête de l'utilisateur (DIFF ou OLDM), au 
+ moment où la fonction parse() se termine normalement, cette valeur change sans raison,
+ entrainant la corruption du contenu de la structure.
+
+ Par conséquent, le diffuseur se retrouvait avec une valeur non reconnue à filtrer 
+ et ne pouvait pas satisfaire les requêtes de l'utilisateur.
+
+ L'éventualité d'un effet de bord lié à une instruction en trop avait été envisagée,
+ mais à travers le débogage, il s'est avèré que d'une part il y avait effectivement
+ un effet de bord, et d'autre part, il n'était pas lié à une erreur du programeur
+ mais un problème lié au depilement de la fonction parse().
+ Le problème n'a pas été approfondi afin d'éviter une perte de temps 
+ sur l'ensemble du projet.
+
+ Solution : Le type énuméré Tweet_type a donc été supprimé de la structure ParsedMSG.
+ En ravanche, on utilise une structure de type Tweet_state.
+ Cette structure contient juste un entier etat. Son fonctionnement est identique
+ à l'énumération Tweet_type mais est indépendant de ParsedMSG.
+ Il fallait donc définir la structure et fixer la valeur de l'entier pour indiquer
+ le type de tweet.
+
+ Cette solution est moins efficace que l'énumération mais cela a permis de
+ rêgler le problème de l'effet de bord.
+
+ 
+ II/ Effet de bord sur les chaines de caractères
+
+ Lors de la manipulation des chaines de caractères relatives aux adresses IP
+ et au port, la conversion/obtention/traitement des addresse IP 
+ pouvait provoquer un effet de bord ainsi qu'un écrasement de certains caractères 
+ dans les autres champs, entrainant une corruption des données. 
+ Ce problème, rencontré notamment dans les fonctions parse(), ip_to15() et int_to_char() 
+ était dû à l'utilisation des fonctions de la famille sprintf(), 
+ qui introduisait le caractère '\0' dans les chaines.
+
+ Solution : Dans la mesure où l'on ne pouvait pas se passer de ces fonctions, 
+ il a fallu passer par une chaine tampon qui allait contenir la chaine + '\0' 
+ et faire une copie de la chaine sans le '\0' dans les champs des structures concernées.
+
+
