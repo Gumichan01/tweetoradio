@@ -127,7 +127,7 @@ int parse(const char *str, ParsedMSG * p)
     }
     else if(!strncmp(str,"LIST\r\n",6) )     /* Demande liste des diffuseurs */
     {
-        p->msg_type = RENO;
+        p->msg_type = LIST;
         err = 1;
     }
     else
