@@ -653,7 +653,7 @@ void * inscription(void * param)
         pthread_exit(NULL);
     }
 
-    sprintf(msg,"REGI %.15s %.4s %.15s %.4s\r\n",diff->ip_multicast,diff->port_multicast,
+    sprintf(msg,"REGI %.8s %.15s %.4s %.15s %.4s\r\n",diff->id,diff->ip_multicast,diff->port_multicast,
                                                     diff->ip_local,diff->port_local);
 
     err = send(sock,msg,strlen(msg),MSG_NOSIGNAL);
