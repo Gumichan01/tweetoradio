@@ -42,7 +42,7 @@ mainDiffuseur.o : mainDiffuseur.c
 
 
 # On construit l'executable du gestionnaire
-$(EXEC_GEST) : gestionnaire.o  mainGestionnaire.o
+$(EXEC_GEST) : gestionnaire.o  mainGestionnaire.o parser.o ip_convert.o
 	$(CC) -o $(EXEC_GEST) $^ $(LFLAGS)
 
 gestionnaire.o : gestionnaire.c gestionnaire.h
