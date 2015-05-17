@@ -782,6 +782,8 @@ void help(int sock)
     char last[] = "LAST <numumber_of_msg> : avoir les derniers messages \r\n";
     char root[] = "ROOT <login> : acces administrateur (à venir) \r\n";
     char radio[] = "Gumichan01 radio \nListe des commandes : \r\n";
+    char getf[] = "GETF <nom_fichier> : Reception d'un fichier (à venir) \r\n";
+    char setf[] = "SETF <nom_fichier> : Envoi d'un fichier (à venir) \r\n";
 
     memset(msg,'\0',INFO_LENGTH);
 
@@ -796,6 +798,9 @@ void help(int sock)
     send(sock,mess,strlen(mess),MSG_NOSIGNAL);
     send(sock,last,strlen(last),MSG_NOSIGNAL);
     send(sock,root,strlen(root),MSG_NOSIGNAL);
+    send(sock,setf,strlen(setf),MSG_NOSIGNAL);
+    send(sock,getf,strlen(getf),MSG_NOSIGNAL);
+
     send(sock,"ENDM\r\n",HEADER_MSG_LENGTH,MSG_NOSIGNAL);
 }
 
