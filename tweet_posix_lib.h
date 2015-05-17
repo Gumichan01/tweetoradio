@@ -12,4 +12,8 @@
 #include <arpa/inet.h>
 
 
+#include <poll.h>
+#include <fcntl.h>
+#include <sys/time.h>
+
 #endif /* TWEET_POSIX_LIB_INCLUDED_H */

@@ -203,6 +203,7 @@ void * tcp_request(void * param)
     int lus;
     int err;
 
+    struct pollfd pfd;
 
     /* On va utiliser la structure de parsing */
     ParsedMSG p;
@@ -220,16 +221,42 @@ void * tcp_request(void * param)
     /* On rend le thread indépendant */
     pthread_detach(pthread_self());
 
-    lus = recv(sockclt,msg,TWEET_LENGTH,0);
+    pfd.fd = sockclt;
+    pfd.events = POLLIN;
 
-    if(lus < 0 )
+    if(fcntl(sockclt,F_SETFL,O_NONBLOCK))
     {
-       perror("tcp_request - recv() ");
-       close(sockclt);
-       pthread_exit(NULL);
+        perror("tcp_request - Internal error : fcntl() ");
+        close(sockclt);
+        pthread_exit(NULL);
     }
 
-    /* message trop court ou n'ayant pas le couple '\r''\n' -> INVALIDE */
+    switch(poll(&pfd,1,RECV_WAIT))
+    {
+        case 0 :    fprintf(stderr,"Aucune réponse du clientclient %s - %d | Fermeture connexion.\n\n",ip_clt,port);
+                    close(sockclt);
+                    pthread_exit(NULL);
+                    break;
+
+        case -1 :   perror("tcp_request - poll() ");
+                    close(sockclt);
+                    pthread_exit(NULL);
+                    break;
+
+        default :   {
+                        lus = recv(sockclt,msg,TWEET_LENGTH,0);
+
+                        if(lus < 0 )
+                        {
+                           perror("tcp_request - recv() ");
+                           close(sockclt);
+                           pthread_exit(NULL);
+                        }
+                    }
+    }
+
+
+    /* Message trop court ou n'ayant pas le couple '\r''\n' -> INVALIDE */
     if(lus < 2 || msg[lus-1] != '\n' || msg[lus-2] != '\r')
     {
         printf("Message invalide issue du client %s - %d | Fermeture connexion.\n\n",ip_clt,port);
@@ -667,7 +694,7 @@ void * inscription(void * param)
 
     memset(msg,0,REGI_LENGTH);
 
-    lus = recv(sock,msg,HEADER_MSG,0);
+    lus = recv(sock,msg,HEADER_MSG_LENGTH,0);
 
     if(lus == -1)
     {
@@ -702,7 +729,7 @@ void * inscription(void * param)
     {
         while(1)
         {
-            lus = recv(sock,msg,HEADER_MSG,0);
+            lus = recv(sock,msg,HEADER_MSG_LENGTH,0);
 
             if(lus == -1)
             {
@@ -719,7 +746,7 @@ void * inscription(void * param)
 
             if(p.msg_type == RUOK)
             {
-                err = send(sock,"IMOK\r\n",HEADER_MSG,MSG_NOSIGNAL);
+                err = send(sock,"IMOK\r\n",HEADER_MSG_LENGTH,MSG_NOSIGNAL);
 
                 if(err == -1)
                 {

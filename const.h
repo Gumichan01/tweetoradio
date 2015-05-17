@@ -23,7 +23,7 @@
 #define REGI_LENGTH ( TYPE_LENGTH + ID_LENGTH + IP_LENGTH + PORT_LENGTH + IP_LENGTH + PORT_LENGTH + 5 + 2 )
 
 #define HEADER_TXT 4            /* Taille de l'entête du message */
-#define HEADER_MSG 6            /* Taille du message entête */
+#define HEADER_MSG_LENGTH 6     /* Taille du message entête */
 
 #define MAX_NUM_MESSAGE 9999    /* Identifiant max du message */
 #define MIN_NUM_MESSAGE 0       /* Identifiant min du message */
