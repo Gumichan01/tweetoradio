@@ -105,29 +105,34 @@ int parse(const char *str, ParsedMSG * p)
             err = 1;
 
     }
-    else if(!strncmp(str,"IMOK\r\n",HEADER_MSG) )     /* Diffuseur OK */
+    else if(!strncmp(str,"IMOK\r\n",HEADER_MSG_LENGTH) )     /* Diffuseur OK */
     {
         p->msg_type = IMOK;
         err = 1;
     }
-    else if(!strncmp(str,"RUOK\r\n",HEADER_MSG) )     /* Diffuseur toujours actif ? */
+    else if(!strncmp(str,"RUOK\r\n",HEADER_MSG_LENGTH) )     /* Diffuseur toujours actif ? */
     {
         p->msg_type = RUOK;
         err = 1;
     }
-    else if(!strncmp(str,"REOK\r\n",HEADER_MSG) )     /* Enregistrement du diffuseur OK */
+    else if(!strncmp(str,"REOK\r\n",HEADER_MSG_LENGTH) )     /* Enregistrement du diffuseur OK */
     {
         p->msg_type = REOK;
         err = 1;
     }
-    else if(!strncmp(str,"RENO\r\n",HEADER_MSG) )     /* Impossible d'enregistrer le diffuseur */
+    else if(!strncmp(str,"RENO\r\n",HEADER_MSG_LENGTH) )     /* Impossible d'enregistrer le diffuseur */
     {
         p->msg_type = RENO;
         err = 1;
     }
-    else if(!strncmp(str,"LIST\r\n",HEADER_MSG) )     /* Demande liste des diffuseurs */
+    else if(!strncmp(str,"LIST\r\n",HEADER_MSG_LENGTH) )     /* Demande liste des diffuseurs */
     {
         p->msg_type = LIST;
+        err = 1;
+    }
+    else if(!strncmp(str,"INFO\r\n",HEADER_MSG_LENGTH) || !strncmp(str,"HELP\r\n",HEADER_MSG_LENGTH) )     /* Demande info sur le diffuseur cible */
+    {
+        p->msg_type = INFO;
         err = 1;
     }
     else

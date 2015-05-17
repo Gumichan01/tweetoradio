@@ -310,6 +310,11 @@ void * tcp_request(void * param)
                     }
                     break;
 
+        case INFO : {
+                        help(sockclt);
+                    }
+                    break;
+
         default :  err = 0;
                     break;
     }
@@ -767,8 +772,32 @@ void * inscription(void * param)
 
 
 
+/*
+    Affiche les informations sur le diffuseurs avec les commandes disponibles
+*/
+void help(int sock)
+{
+    char msg[INFO_LENGTH];
+    char mess[] = "MESS <id> <msg> : envoyer un message \r\n";
+    char last[] = "LAST <numumber_of_msg> : avoir les derniers messages \r\n";
+    char root[] = "ROOT <login> : acces administrateur (à venir) \r\n";
+    char radio[] = "Gumichan01 radio \nListe des commandes : \r\n";
 
+    memset(msg,'\0',INFO_LENGTH);
 
+    strncpy(msg,"INFO ",5);
+    strncat(msg,diff->id,ID_LENGTH);
+    strcat(msg,radio);
+
+    msg[strlen(msg)] = CR;
+    msg[strlen(msg)] = LF;
+
+    send(sock,msg,strlen(msg),MSG_NOSIGNAL);
+    send(sock,mess,strlen(mess),MSG_NOSIGNAL);
+    send(sock,last,strlen(last),MSG_NOSIGNAL);
+    send(sock,root,strlen(root),MSG_NOSIGNAL);
+    send(sock,"ENDM\r\n",HEADER_MSG_LENGTH,MSG_NOSIGNAL);
+}
 
 
 

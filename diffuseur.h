@@ -89,6 +89,8 @@ int sauvegarderTweet(Tweet *t);
 
 void * inscription(void * param);
 
+void help(int sock);
+
 
 #endif /* DIFFUSEUR_INCLUDED_H */
 
