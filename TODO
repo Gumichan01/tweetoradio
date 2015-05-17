@@ -73,15 +73,15 @@ DONE - [Luxon] Développer le diffuseur (partie client TCP + multi-diffusion)
 
 DOING - Développer le gestionnaire
 	- [Pierre] Demande d'enregistrement du diffuseur (DOING)
-	- [Cyrille ou Pierre] Interrogation du gestionnaire sur l'activité des diffuseurs (TODO)
+	- [Pierre] Interrogation du gestionnaire sur l'activité des diffuseurs (DOING)
 
-TODO - [Cyrille] Etablir la communication entre l'utilisateur et le gestionnaire
+TODO - [Pierre ou Luxon] Etablir la communication entre l'utilisateur et le gestionnaire
 	- (TODO) Gérer les requêtes utilisateurs
 	- (TODO) Créer un programme client
 
 Extensions possibles :
 
- - Partage de fichier 
+ - Partage de fichier (DOING)
  - Commande d'administration d'un diffuseur et/ou d'un gestionnaire
  - Extinction propre du système
  - Des suggestions ?
