@@ -898,7 +898,11 @@ void uploadFile(int sockclt,ParsedMSG *p)
     close(fd);
 
     if(ok)
+    {
         envoiAccuse(sockclt);
+        sprintf(buf,"Message du diffuseur %.8s - Nouveau fichier disponible : %s \n",diff->id,nom);
+        preparerMSG(buf);
+    }
     else
         remove(nom);
 }
@@ -983,6 +987,62 @@ void downloadFile(int sockclt,ParsedMSG *p)
 }
 
 
+/* Enregistre un message dans le file d'attente */
+void preparerMSG(char * msg)
+{
+    Tweet *t = NULL;
+
+    if(msg == NULL)
+        return;
+
+    t = malloc(sizeof(Tweet));
+
+    if(t == NULL)
+    {
+        perror("preparerMSG() - malloc ");
+        return;
+    }
+
+    /* Remplissage de la structure */
+    Tweet_init(t);
+
+    strncpy(t->id,diff->id, ID_LENGTH);
+    strncpy(t->mess,msg, MSG_LENGTH);
+
+    /* Verrou */
+    pthread_mutex_lock(&verrouQ);
+
+    int_to_char(num_mess,t->num_mess);
+
+    if(num_mess == MAX_NUM_MESSAGE)
+        num_mess = MIN_NUM_MESSAGE;
+    else
+        num_mess++;
+
+
+    if(diff->file_attente == NULL)
+    {
+
+        diff->file_attente = malloc(sizeof(Queue));
+
+        if(diff->file_attente == NULL)
+        {
+            perror("preparerMSG() - malloc ");
+            free(t);
+            return;
+        }
+        else
+        {
+            Queue_init(diff->file_attente);
+        }
+    }
+
+    Queue_push(diff->file_attente,t);
+
+    /* Fin Verrou */
+    pthread_mutex_unlock(&verrouQ);
+
+}
 
 
 /*

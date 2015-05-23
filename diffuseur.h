@@ -93,6 +93,8 @@ void uploadFile(int sockclt,ParsedMSG *p);
 
 void downloadFile(int sockclt,ParsedMSG *p);
 
+void preparerMSG(char * msg);
+
 void help(int sock);
 
 
