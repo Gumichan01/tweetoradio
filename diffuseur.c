@@ -315,6 +315,16 @@ void * tcp_request(void * param)
                     }
                     break;
 
+        case SETF : {
+                        uploadFile(sockclt);
+                    }
+                    break;
+
+        case GETF : {
+                        downloadFile(sockclt);
+                    }
+                    break;
+
         default :  err = 0;
                     break;
     }
@@ -769,6 +779,22 @@ void * inscription(void * param)
 
     pthread_exit(NULL);
 }
+
+
+
+
+void uploadFile(int sockclt)
+{
+
+}
+
+
+
+void downloadFile(int sockclt)
+{
+
+}
+
 
 
 

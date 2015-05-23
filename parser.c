@@ -135,6 +135,24 @@ int parse(const char *str, ParsedMSG * p)
         p->msg_type = INFO;
         err = 1;
     }
+    else if(!strncmp(str,"SETF",4))
+    {
+        p->msg_type = SETF;
+        err = sscanf(str,"SETF%c%140[a-zA-Z0-9?'-\".,;:!/*+ _#&àâäéèîï`ôöüù%%@ç]\r\n",&sp1,p->mess);
+
+        if(err <= 0 || sp1 == ' ')
+            err = (sp1 != space) ? 0:err;
+
+    }
+    else if(!strncmp(str,"GETF",4))
+    {
+        p->msg_type = GETF;
+        err = sscanf(str,"GETF%c%140[a-zA-Z0-9?'-\".,;:!/*+ _#&àâäéèîï`ôöüù%%@ç]\r\n",&sp1,p->mess);
+
+        if(err <= 0 || sp1 == ' ')
+            err = (sp1 != space) ? 0:err;
+
+    }
     else
     {
         errno = EINVAL;

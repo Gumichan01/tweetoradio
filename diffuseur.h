@@ -89,6 +89,10 @@ int sauvegarderTweet(Tweet *t);
 
 void * inscription(void * param);
 
+void uploadFile(int sockclt);
+
+void downloadFile(int sockclt);
+
 void help(int sock);
 
 
