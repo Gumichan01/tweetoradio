@@ -208,8 +208,6 @@ void * tcp_request(void * param)
     /* On va utiliser la structure de parsing */
     ParsedMSG p;
 
-    ParserMSG_init(&p);
-
     /* On récupère les champs */
     strcpy(ip_clt,c->ip);
     port = c->port;
@@ -272,6 +270,8 @@ void * tcp_request(void * param)
 
     write(1,msg,lus);
     printf("\n");
+
+    ParserMSG_init(&p);
 
     /* On analyse le message */
     err = parse(msg,&p);
@@ -788,6 +788,7 @@ void uploadFile(int sockclt,ParsedMSG *p)
     char endFile[] = "ENDF\r\n";
     char nom[TWEET_LENGTH];
     char buf[INFO_LENGTH];
+    char nullStr[140];
     int err, lus, fd;
     struct pollfd pfd;
 
@@ -796,9 +797,14 @@ void uploadFile(int sockclt,ParsedMSG *p)
 
     // Creér le fichier
     strcpy(nom,p->mess);
+    memset(nullStr,0,140);
+
+    if(strcmp(p->mess,nullStr))
+        return;
 
     /* Si on a un chemin */
     mkdirP(dirname(p->mess));
+
 
     fd = creat(nom, 0755);
 
@@ -881,6 +887,7 @@ void uploadFile(int sockclt,ParsedMSG *p)
     // Ferme le fichier
     close(fd);
 
+    envoiAccuse(sockclt);
 }
 
 
