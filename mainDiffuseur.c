@@ -16,6 +16,8 @@
 #include "diffuseur.h"
 #include "ip_convert.h"
 
+#include "queue.h"
+#include "stack.h"
 
 Diffuseur *diff = NULL;
 
@@ -73,6 +75,8 @@ int main(int argc, char **argv)
 
     pthread_join(thread,NULL);
 
+    Queue_clean_up(diff->file_attente);
+    Stack_clean_up(diff->historique);
     free(diff);
 
     return EXIT_SUCCESS;

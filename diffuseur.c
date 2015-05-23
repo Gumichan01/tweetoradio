@@ -773,7 +773,7 @@ void * inscription(void * param)
 
 
 /*
-    Affiche les informations sur le diffuseurs avec les commandes disponibles
+    Affiche les informations sur le diffuseur avec les commandes disponibles
 */
 void help(int sock)
 {
