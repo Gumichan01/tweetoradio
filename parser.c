@@ -51,7 +51,7 @@ int parse(const char *str, ParsedMSG * p)
     {
 
         p->msg_type = MESS;
-        err = sscanf(str,"MESS%c%8[a-zA-Z0-9_-]%c%140[a-zA-Z0-9?'-\".,;:!/*+ _#&àâäéèîï`ôöüù%%@ç]\r\n",&sp1,p->id,&sp2,p->mess);
+        err = sscanf(str,"MESS%c%8[a-zA-Z0-9_-]%c%140[a-zA-Z0-9?'-\".,;':!/*+ _#&àâäéèîï`ôöüù%%@ç]\r\n",&sp1,p->id,&sp2,p->mess);
 
         if(err > 0 && sp1 == space && sp2 == space)
         {
@@ -138,7 +138,7 @@ int parse(const char *str, ParsedMSG * p)
     else if(!strncmp(str,"SETF",4))
     {
         p->msg_type = SETF;
-        err = sscanf(str,"SETF%c%140[a-zA-Z0-9?'-\".,;:!/*+ _#&àâäéèîï`ôöüù%%@ç]\r\n",&sp1,p->mess);
+        err = sscanf(str,"SETF%c%140[a-zA-Z0-9?'-\".,;:'!/*+ _#&àâäéèîï`ôöüù%%@ç]\r\n",&sp1,p->mess);
 
         if(err <= 0 || sp1 != ' ')
             err = (sp1 != space) ? 0:err;
@@ -147,7 +147,7 @@ int parse(const char *str, ParsedMSG * p)
     else if(!strncmp(str,"GETF",4))
     {
         p->msg_type = GETF;
-        err = sscanf(str,"GETF%c%140[a-zA-Z0-9?'-\".,;:!/*+ _#&àâäéèîï`ôöüù%%@ç]\r\n",&sp1,p->mess);
+        err = sscanf(str,"GETF%c%140[a-zA-Z0-9?'-\".,;':!/*+ _#&àâäéèîï`ôöüù%%@ç]\r\n",&sp1,p->mess);
 
         if(err <= 0 || sp1 != ' ')
             err = (sp1 != space) ? 0:err;
@@ -156,11 +156,16 @@ int parse(const char *str, ParsedMSG * p)
     else if(!strncmp(str,"DATA",4))
     {
         p->msg_type = DATA;
-        err = sscanf(str,"DATA%c%140[a-zA-Z0-9?'-\".,;:!/*+ _#&àâäéèîï`ôöüù%%@ç]\r\n",&sp1,p->mess);
+        err = sscanf(str,"DATA%c%140[a-zA-Z0-9?'-\".,';:!/*+ _#&àâäéèîï`ôöüù%%@ç]\r\n",&sp1,p->mess);
 
         if(err <= 0 || sp1 != ' ')
             err = (sp1 != space) ? 0:err;
 
+    }
+    else if(!strncmp(str,"ENDF\r\n",HEADER_MSG_LENGTH))
+    {
+        p->msg_type = ENDF;
+        err = 1;
     }
     else
     {

@@ -13,6 +13,7 @@
 #include "stack.h"
 #include "ip_convert.h"
 #include "annexe.h"
+#include "lock_lib.h"
 
 extern Diffuseur *diff;    /* Le diffuseur utilisé dans le main */
 
@@ -786,9 +787,9 @@ void uploadFile(int sockclt,ParsedMSG *p)
 {
     char give[] = "GIVE\r\n";
     char endFile[] = "ENDF\r\n";
-    char nom[TWEET_LENGTH];
+    char nom[MSG_LENGTH];
     char buf[INFO_LENGTH];
-    char nullStr[140];
+    char nullStr[MSG_LENGTH];
     int err, lus, fd;
     int ok = 1;
     struct pollfd pfd;
@@ -796,9 +797,9 @@ void uploadFile(int sockclt,ParsedMSG *p)
     pfd.fd = sockclt;
     pfd.events = POLLIN;
 
-    // Creér le fichier
+    /* Test pré-condition */
     strcpy(nom,p->mess);
-    memset(nullStr,0,140);
+    memset(nullStr,0,MSG_LENGTH);
 
     if(!strcmp(p->mess,nullStr))
         return;
@@ -807,7 +808,7 @@ void uploadFile(int sockclt,ParsedMSG *p)
     mkdirP(dirname(p->mess));
 
 
-    fd = creat(nom, 0755);
+    fd = creat(nom, 0600);
 
     if(fd == -1)
     {
@@ -853,12 +854,13 @@ void uploadFile(int sockclt,ParsedMSG *p)
     }
     else
     {
+        fprintf(stderr,"uploadFile() - Erreur interne ou bien pas de réponse recpetion non bloquante");
         close(fd);
         remove(nom);
         return;
     }
 
-    while(strncmp(p->mess,endFile,HEADER_MSG_LENGTH))
+    while(strncmp(buf,endFile,HEADER_MSG_LENGTH))
     {
         write(fd,p->mess,strlen(p->mess));
 
@@ -878,6 +880,7 @@ void uploadFile(int sockclt,ParsedMSG *p)
 
             if(err == -1)
             {
+                perror("uploadFile() - parse ");
                 ok = 0;
                 break;
             }
@@ -885,12 +888,13 @@ void uploadFile(int sockclt,ParsedMSG *p)
         }
         else
         {
+            fprintf(stderr,"uploadFile() - Erreur interne ou bien pas de réponse recpetion non bloquante\n");
             ok = 0;
             break;
         }
     }
 
-    // Ferme le fichier
+
     close(fd);
 
     if(ok)
@@ -903,9 +907,79 @@ void uploadFile(int sockclt,ParsedMSG *p)
 
 void downloadFile(int sockclt,ParsedMSG *p)
 {
-    // Vérifier l'existence du fichier et le lire
-    // Envoi du contenu au client
-    // Fin message et fini
+    char endFile[] = "ENDF\r\n";
+    char nullStr[MSG_LENGTH];
+    char buf[MSG_LENGTH];
+    char nom[MSG_LENGTH];
+    char data[INFO_LENGTH];
+
+    int err,lus;
+    int fd, ok = 1;
+
+    struct stat st;
+
+    /* Test pré-condition */
+    strcpy(nom,p->mess);
+    memset(nullStr,0,MSG_LENGTH);
+
+    if(!strcmp(p->mess,nullStr))
+        return;
+
+    if(stat(nom,&st) == -1)
+    {
+        perror("downloadFile() - stat ");
+        return;
+    }
+
+    fd = open(nom,O_RDONLY);
+
+    if(fd == -1)
+    {
+        perror("downloadFile() - open ");
+        return;
+    }
+
+    /* Verrou */
+    if(read_lock(fd,0,SEEK_SET,-1) == -1 )
+    {
+        perror("downloadFile() - read_lock() - fcntl ");
+        fprintf(stderr,"ATTENTION : le fichier %s n'est pas protégé en lecture.\n", nom);
+    }
+
+
+    /* Lire le fichier et envoyer */
+    while((lus = read(fd,buf,MSG_LENGTH)) > 0)
+    {
+        buf[lus] = '\0';
+        snprintf(data,INFO_LENGTH,"DATA %s \r\n",buf);
+
+        err = send(sockclt,data,strlen(data),MSG_NOSIGNAL);
+
+        if(err == -1)
+        {
+            perror("downloadFile() - send ");
+            ok = 0;
+            break;
+        }
+    }
+
+    if(ok)
+    {
+        err = send(sockclt,endFile,HEADER_MSG_LENGTH,MSG_NOSIGNAL);
+
+        if(err == -1)
+        {
+            perror("downloadFile() - send ");
+        }
+    }
+
+
+    if(unlockfile(fd) == -1 )
+    {
+        perror("downloadFile() - unlockFile() - fcntl ");
+    }
+
+    close(fd);
 }
 
 

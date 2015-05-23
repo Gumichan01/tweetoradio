@@ -15,7 +15,7 @@ EXEC_CLT=
 all : $(EXEC_DIFF) $(EXEC_GEST) $(EXEC_CLT)
 
 
-$(EXEC_DIFF) : tweet.o queue.o stack.o parser.o ip_convert.o annexe.o diffuseur.o mainDiffuseur.o
+$(EXEC_DIFF) : tweet.o queue.o stack.o parser.o ip_convert.o annexe.o diffuseur.o mainDiffuseur.o lock_lib.o
 	$(CC) -o $(EXEC_DIFF) $^ $(LFLAGS)
 
 tweet.o : tweet.c tweet.h const.h
@@ -37,6 +37,9 @@ diffuseur.o : diffuseur.c diffuseur.h
 	$(CC) -o $@ -c $< $(CFLAGS)
 
 annexe.o : annexe.c annexe.h
+	$(CC) -o $@ -c $< $(CFLAGS)
+
+lock_lib.o : lock_lib.c lock_lib.h
 	$(CC) -o $@ -c $< $(CFLAGS)
 
 mainDiffuseur.o : mainDiffuseur.c

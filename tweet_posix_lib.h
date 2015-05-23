@@ -18,5 +18,6 @@
 #include <sys/time.h>
 
 #include <sys/wait.h>
+#include <sys/stat.h>
 
 #endif /* TWEET_POSIX_LIB_INCLUDED_H */
