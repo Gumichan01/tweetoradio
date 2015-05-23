@@ -790,6 +790,7 @@ void uploadFile(int sockclt,ParsedMSG *p)
     char buf[INFO_LENGTH];
     char nullStr[140];
     int err, lus, fd;
+    int ok = 1;
     struct pollfd pfd;
 
     pfd.fd = sockclt;
@@ -799,7 +800,7 @@ void uploadFile(int sockclt,ParsedMSG *p)
     strcpy(nom,p->mess);
     memset(nullStr,0,140);
 
-    if(strcmp(p->mess,nullStr))
+    if(!strcmp(p->mess,nullStr))
         return;
 
     /* Si on a un chemin */
@@ -868,6 +869,7 @@ void uploadFile(int sockclt,ParsedMSG *p)
             if(lus == -1)
             {
                 perror("uploadFile() - recv ");
+                ok = 0;
                 break;
             }
 
@@ -876,18 +878,25 @@ void uploadFile(int sockclt,ParsedMSG *p)
 
             if(err == -1)
             {
+                ok = 0;
                 break;
             }
 
         }
         else
+        {
+            ok = 0;
             break;
+        }
     }
 
     // Ferme le fichier
     close(fd);
 
-    envoiAccuse(sockclt);
+    if(ok)
+        envoiAccuse(sockclt);
+    else
+        remove(nom);
 }
 
 
