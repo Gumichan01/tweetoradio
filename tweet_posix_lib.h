@@ -11,9 +11,12 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
+#include <libgen.h>
 
 #include <poll.h>
 #include <fcntl.h>
 #include <sys/time.h>
+
+#include <sys/wait.h>
 
 #endif /* TWEET_POSIX_LIB_INCLUDED_H */

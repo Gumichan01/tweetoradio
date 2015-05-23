@@ -12,7 +12,7 @@
 #include "queue.h"
 #include "stack.h"
 #include "ip_convert.h"
-
+#include "annexe.h"
 
 extern Diffuseur *diff;    /* Le diffuseur utilisé dans le main */
 
@@ -796,6 +796,9 @@ void uploadFile(int sockclt,ParsedMSG *p)
 
     // Creér le fichier
     strcpy(nom,p->mess);
+
+    /* Si on a un chemin */
+    mkdirP(dirname(p->mess));
 
     fd = creat(nom, 0755);
 
