@@ -75,7 +75,9 @@ int main(int argc, char **argv)
 
     pthread_join(thread,NULL);
 
-    Queue_clean_up(diff->file_attente);
+    if(diff->file_attente != NULL)
+        Queue_clean_up(diff->file_attente);
+
     Stack_clean_up(diff->historique);
     free(diff);
 

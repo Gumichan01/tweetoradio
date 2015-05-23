@@ -330,7 +330,6 @@ void * tcp_request(void * param)
     }
 
 
-
     if(err == -1)
     {
         /* Echec, on ne peut rien faire, NE DOIT JAMAIS ETRE EXCECUTE */
@@ -785,6 +784,58 @@ void * inscription(void * param)
 
 void uploadFile(int sockclt)
 {
+    char give[] = "GIVE\r\n";
+    char endFile[] = "ENDF\r\n";
+    char buf[INFO_LENGTH];
+    int err, lus;
+    struct pollfd pfd;
+
+    pfd.fd = sockclt;
+    pfd.events = POLLIN;
+
+    err = send(sockclt,give,HEADER_MSG_LENGTH,MSG_NOSIGNAL);
+
+    if(err == -1)
+    {
+        perror("uploadFile() -send ");
+        return;
+    }
+
+    memset(buf,0,INFO_LENGTH);
+
+
+    if(poll(&pfd,1,RECV_WAIT) == 1 && pfd.revents == POLLIN)
+    {
+        lus = recv(sockclt,buf,INFO_LENGTH,0);
+
+        if(lus == -1)
+        {
+            perror("uploadFile() - recv ");
+            return;
+        }
+    }
+    else
+    {
+        return;
+    }
+
+    while(strncmp(buf,endFile,HEADER_MSG_LENGTH))
+    {
+        write(1,buf,lus);
+
+        if(poll(&pfd,1,RECV_WAIT) == 1 && pfd.revents == POLLIN)
+        {
+            lus = recv(sockclt,buf,INFO_LENGTH,0);
+
+            if(lus == -1)
+            {
+                perror("uploadFile() - recv ");
+                return;
+            }
+        }
+        else
+            return;
+    }
 
 }
 
