@@ -153,6 +153,15 @@ int parse(const char *str, ParsedMSG * p)
             err = (sp1 != space) ? 0:err;
 
     }
+    else if(!strncmp(str,"DATA",4))
+    {
+        p->msg_type = DATA;
+        err = sscanf(str,"DATA%c%140[a-zA-Z0-9?'-\".,;:!/*+ _#&àâäéèîï`ôöüù%%@ç]\r\n",&sp1,p->mess);
+
+        if(err <= 0 || sp1 == ' ')
+            err = (sp1 != space) ? 0:err;
+
+    }
     else
     {
         errno = EINVAL;

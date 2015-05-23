@@ -25,7 +25,7 @@
     - IMOK : Messages envoyés par le diffuseur au gestionnaire
     - LIST : Messages envoyés par l'utilisateur au gestionnaire
     - INFO : Message envoyé par le client au diffuseur pour avoir des informations
-    - FILE, ENDF : client/diffuseur ou diffuseur/client
+    - DATA, ENDF : client/diffuseur ou diffuseur/client
     - NO_TYPE : Pas de type défini
 
     NOTE :
@@ -38,7 +38,7 @@
         ne sera pas intégrée.
 
 */
-typedef enum{MESS,LAST,REGI,REOK,RENO,RUOK,IMOK,LIST,INFO,SETF,GETF,ENDF,NO_TYPE} ReceivedMSG_type;
+typedef enum{MESS,LAST,REGI,REOK,RENO,RUOK,IMOK,LIST,INFO,SETF,GETF,DATA,ENDF,NO_TYPE} ReceivedMSG_type;
 
 
 /*

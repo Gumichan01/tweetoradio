@@ -316,12 +316,12 @@ void * tcp_request(void * param)
                     break;
 
         case SETF : {
-                        uploadFile(sockclt);
+                        uploadFile(sockclt,&p);
                     }
                     break;
 
         case GETF : {
-                        downloadFile(sockclt);
+                        downloadFile(sockclt,&p);
                     }
                     break;
 
@@ -782,27 +782,41 @@ void * inscription(void * param)
 
 
 
-void uploadFile(int sockclt)
+void uploadFile(int sockclt,ParsedMSG *p)
 {
     char give[] = "GIVE\r\n";
     char endFile[] = "ENDF\r\n";
+    char nom[TWEET_LENGTH];
     char buf[INFO_LENGTH];
-    int err, lus;
+    int err, lus, fd;
     struct pollfd pfd;
 
     pfd.fd = sockclt;
     pfd.events = POLLIN;
 
+    // Creér le fichier
+    strcpy(nom,p->mess);
+
+    fd = creat(nom, 0755);
+
+    if(fd == -1)
+    {
+        perror("uploadFile() - creat ");
+        return;
+    }
+
+    /* Pret à recevoir les données */
     err = send(sockclt,give,HEADER_MSG_LENGTH,MSG_NOSIGNAL);
 
     if(err == -1)
     {
-        perror("uploadFile() -send ");
+        perror("uploadFile() - send ");
+        close(fd);
+        remove(nom);
         return;
     }
 
     memset(buf,0,INFO_LENGTH);
-
 
     if(poll(&pfd,1,RECV_WAIT) == 1 && pfd.revents == POLLIN)
     {
@@ -811,17 +825,32 @@ void uploadFile(int sockclt)
         if(lus == -1)
         {
             perror("uploadFile() - recv ");
+            close(fd);
+            remove(nom);
             return;
         }
+
+        ParserMSG_init(p);
+        err = parse(buf,p);
+
+        if(err == -1)
+        {
+            close(fd);
+            remove(nom);
+            return;
+        }
+
     }
     else
     {
+        close(fd);
+        remove(nom);
         return;
     }
 
-    while(strncmp(buf,endFile,HEADER_MSG_LENGTH))
+    while(strncmp(p->mess,endFile,HEADER_MSG_LENGTH))
     {
-        write(1,buf,lus);
+        write(fd,p->mess,strlen(p->mess));
 
         if(poll(&pfd,1,RECV_WAIT) == 1 && pfd.revents == POLLIN)
         {
@@ -830,20 +859,34 @@ void uploadFile(int sockclt)
             if(lus == -1)
             {
                 perror("uploadFile() - recv ");
-                return;
+                break;
             }
+
+            ParserMSG_init(p);
+            err = parse(buf,p);
+
+            if(err == -1)
+            {
+                break;
+            }
+
         }
         else
-            return;
+            break;
     }
+
+    // Ferme le fichier
+    close(fd);
 
 }
 
 
 
-void downloadFile(int sockclt)
+void downloadFile(int sockclt,ParsedMSG *p)
 {
-
+    // Vérifier l'existence du fichier et le lire
+    // Envoi du contenu au client
+    // Fin message et fini
 }
 
 
