@@ -21,10 +21,7 @@ Groupe :
  - Pour compiler le programme, executer la commande suivante :
 	$ make
 
- Pour gagner un peu de temps à la compilation, vous pouver utiliser les options -r et -j
-	$ make -r -j
-
- - Pour effacer les fichiers intermediares :
+ - Pour effacer les fichiers intermediaires :
 	$ make cleanobj
 
  - Pour tout effacer :
@@ -56,9 +53,26 @@ Groupe :
 
 == Extensions  ==
 
-#A venir
+
+ I/ Partage de fichiers
+
+ Le diffuseur prend désormais en charge le partage de fichier.
+ L'utilisateur peut mettre en ligne en fichier et en récupérer un.
+ A chaque mise en ligne d'un fichier, les abonnés au diffuseur, sont informés
+
+ Instructions associées : 
+ 
+  - SETF : Envoi d'un fichier
+  - GETF : Réception d'un fichier
+  - GIVE : (côté diffuseur) Attente de données
+  - DATA : Donnée en cours de transmission
+  - ENDF : Fin de fichier
 
 
+
+ II / Administration Système
+ 
+ # A venir
 
 == Problèmes rencontrés  ==
 
@@ -94,7 +108,7 @@ Groupe :
  sur l'ensemble du projet.
 
  Solution : Le type énuméré Tweet_type a donc été supprimé de la structure ParsedMSG.
- En ravanche, on utilise une structure de type Tweet_state.
+ En contrepartie, on a défini une structure de type Tweet_state.
  Cette structure contient juste un entier etat. Son fonctionnement est identique
  à l'énumération Tweet_type mais est indépendant de ParsedMSG.
  Il fallait donc définir la structure et fixer la valeur de l'entier pour indiquer
@@ -107,7 +121,7 @@ Groupe :
  II/ Effet de bord sur les chaines de caractères
 
  Lors de la manipulation des chaines de caractères relatives aux adresses IP
- et au port, la conversion/obtention/traitement des addresse IP 
+ et au port, la conversion/obtention/traitement des addresses IP 
  pouvait provoquer un effet de bord ainsi qu'un écrasement de certains caractères 
  dans les autres champs, entrainant une corruption des données. 
  Ce problème, rencontré notamment dans les fonctions parse(), ip_to15() et int_to_char() 
