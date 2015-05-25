@@ -171,7 +171,8 @@ int parse(const char *str, ParsedMSG * p)
             err = (sp1 != space) ? 0:err;
         else
         {
-            if(strncmp(p->mess,"SHUT",4) != 0 && strncmp(p->mess,"NBCO",4) != 0)
+            if(strncmp(p->mess,"SHUT",4) != 0 && strncmp(p->mess,"NBCO",4) != 0
+                && strncmp(p->mess,"NBMQ",4) != 0 && strncmp(p->mess,"NBMS",4) != 0)
                 err = 0;
             else
                 err = 1;

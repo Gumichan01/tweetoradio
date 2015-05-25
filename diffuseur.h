@@ -97,6 +97,10 @@ void admin(int sockclt, ParsedMSG * p);
 
 void nombreConnexions(int sockclt, ParsedMSG * p);
 
+void nombreMSGdansFile(int sockclt, ParsedMSG * p);
+
+void nombreMSGdansHisto(int sockclt, ParsedMSG * p);
+
 void shut(int sockclt, ParsedMSG * p);
 
 void preparerMSG(char * msg);

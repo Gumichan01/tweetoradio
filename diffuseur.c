@@ -803,17 +803,72 @@ void admin(int sockclt, ParsedMSG * p)
     {
         nombreConnexions(sockclt,p);
     }
-
+    else if(!strncmp(p->mess,SIZEQUEUE_CMD,4))
+    {
+        nombreMSGdansFile(sockclt,p);
+    }
+    else if(!strncmp(p->mess,SIZESTACK_CMD,4))
+    {
+        nombreMSGdansHisto(sockclt,p);
+    }
 
 }
 
-
+/*
+    Nombre total de connexions
+*/
 void nombreConnexions(int sockclt, ParsedMSG * p)
 {
     char msg[MSG_LENGTH];
     int err;
 
     sprintf(msg,"INFO = %.8s = Nombre total de connexions TCP depuis le démarrage : %ld \r\n",diff->id, nbConnexions);
+
+    err = send(sockclt,msg,strlen(msg),MSG_NOSIGNAL);
+
+    if(err ==-1)
+    {
+        perror("nombreConnexions - send() ");
+    }
+}
+
+
+/*
+    Nombre de messages en attente de diffusion
+*/
+void nombreMSGdansFile(int sockclt, ParsedMSG * p)
+{
+    char msg[MSG_LENGTH];
+    int err;
+
+    if(diff->file_attente != NULL)
+        sprintf(msg,"INFO = %.8s = Nombre de messages en attente de diffusion: %ld \r\n",
+                    diff->id, diff->file_attente->size);
+    else
+        sprintf(msg,"INFO = %.8s = Nombre de messages en attente de diffusion: 0 \r\n",diff->id);
+
+    err = send(sockclt,msg,strlen(msg),MSG_NOSIGNAL);
+
+    if(err ==-1)
+    {
+        perror("nombreConnexions - send() ");
+    }
+}
+
+
+/*
+    Nombre de messages sauvegardés
+*/
+void nombreMSGdansHisto(int sockclt, ParsedMSG * p)
+{
+    char msg[MSG_LENGTH];
+    int err;
+
+    if(diff->historique != NULL)
+        sprintf(msg,"INFO = %.8s = Nombre de messages sauvegardés : %ld \r\n",
+                    diff->id, diff->historique->size);
+    else
+        sprintf(msg,"INFO = %.8s = Nombre de messages sauvegardés: 0 \r\n",diff->id);
 
     err = send(sockclt,msg,strlen(msg),MSG_NOSIGNAL);
 

@@ -33,7 +33,9 @@
 
 
 #define SHUTDOWN_CMD "SHUT"     /* Commande d'extinction */
-#define NBCONNEXIONS_CMD "NBCO"  /* Commande d'obtention du nombre total de connexions*/
+#define NBCONNEXIONS_CMD "NBCO" /* Commande d'obtention du nombre total de connexions*/
+#define SIZEQUEUE_CMD "NBMQ"    /* Nombre de messages en attente de diffusion */
+#define SIZESTACK_CMD "NBMS"    /* Nombre de messages dans l'historique */
 
 #endif /* CONST_INCLUDED_H */
 
