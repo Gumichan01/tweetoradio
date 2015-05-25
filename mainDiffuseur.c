@@ -71,7 +71,7 @@ int main(int argc, char **argv)
 
     pthread_create(&thread,NULL,tcp_server,NULL);
     pthread_create(&thread_gest,NULL,inscription,&g);
-    pthread_create(&thread_multi,NULL,multicast_diffuser,NULL);
+    pthread_create(&thread_multi,NULL,multicastDiffuseur,NULL);
 
     pthread_join(thread,NULL);
 

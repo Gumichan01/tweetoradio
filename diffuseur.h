@@ -83,7 +83,7 @@ void envoiAccuse(int sockclt);
 
 int envoiMessagesHisto(ParsedMSG *p, int sockclt);
 
-void * multicast_diffuser(void * param);
+void * multicastDiffuseur(void * param);
 
 int sauvegarderTweet(Tweet *t);
 

@@ -512,7 +512,7 @@ int envoiMessagesHisto(ParsedMSG *p, int sockclt)
 /*
     Effectue la multidiffusion
 */
-void * multicast_diffuser(void * param)
+void * multicastDiffuseur(void * param)
 {
     int err;
     int sock_multicast;
