@@ -841,11 +841,15 @@ void nombreMSGdansFile(int sockclt, ParsedMSG * p)
     char msg[MSG_LENGTH];
     int err;
 
+    pthread_mutex_lock(&verrouQ);
+
     if(diff->file_attente != NULL)
         sprintf(msg,"INFO = %.8s = Nombre de messages en attente de diffusion: %ld \r\n",
                     diff->id, diff->file_attente->size);
     else
         sprintf(msg,"INFO = %.8s = Nombre de messages en attente de diffusion: 0 \r\n",diff->id);
+
+    pthread_mutex_unlock(&verrouQ);
 
     err = send(sockclt,msg,strlen(msg),MSG_NOSIGNAL);
 
@@ -864,11 +868,15 @@ void nombreMSGdansHisto(int sockclt, ParsedMSG * p)
     char msg[MSG_LENGTH];
     int err;
 
+    pthread_mutex_lock(&verrouH);
+
     if(diff->historique != NULL)
         sprintf(msg,"INFO = %.8s = Nombre de messages sauvegardés : %ld \r\n",
                     diff->id, diff->historique->size);
     else
         sprintf(msg,"INFO = %.8s = Nombre de messages sauvegardés: 0 \r\n",diff->id);
+
+    pthread_mutex_unlock(&verrouH);
 
     err = send(sockclt,msg,strlen(msg),MSG_NOSIGNAL);
 
