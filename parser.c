@@ -179,6 +179,17 @@ int parse(const char *str, ParsedMSG * p)
         }
 
     }
+    else if(!strncmp(str,"PASS",4))
+    {
+        p->msg_type = PASS;
+        err = sscanf(str,"PASS%c%[a-zA-Z0-9]\r\n",&sp1,p->mess);
+
+        if(err <= 0 || sp1 != ' ')
+            err = (sp1 != space) ? 0:err;
+        else
+            err = 1;
+
+    }
     else if(!strncmp(str,"ENDF\r\n",HEADER_MSG_LENGTH))
     {
         p->msg_type = ENDF;
