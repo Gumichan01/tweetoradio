@@ -90,7 +90,7 @@ void Queue_display(Queue *q)
 
     t = q->head;
 
-    printf("Queue display\n");
+    printf("\n = Queue display = \n");
 
     while(t != NULL)
     {
@@ -101,6 +101,7 @@ void Queue_display(Queue *q)
         t = t->next;
     }
 
+    printf("\n = END Queue = \n");
     printf("\n");
 }
 
