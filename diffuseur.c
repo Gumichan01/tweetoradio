@@ -794,20 +794,80 @@ void * inscription(void * param)
 */
 void admin(int sockclt, ParsedMSG * p)
 {
+    int err, lus;
+    char cmd[5];
+    char pswd[] = "PSWD\r\n";
+    char pass[] = "admin";
+    char buf[32];
 
-    if(!strncmp(p->mess,SHUTDOWN_CMD,4))
+    struct pollfd pfd;
+
+    memset(cmd,0,5);
+    strncpy(cmd,p->mess,4);
+
+    err = send(sockclt,pswd,strlen(pswd),MSG_NOSIGNAL);
+
+    if(err ==-1)
+    {
+        perror("admin - send() ");
+        return;
+    }
+
+    pfd.fd = sockclt;
+    pfd.events = POLLIN;
+
+    if(poll(&pfd,1,RECV_WAIT) > 0)
+    {
+        if(pfd.revents == POLLIN)
+        {
+            lus = recv(sockclt,buf,32,MSG_NOSIGNAL);
+
+            if(lus ==-1)
+            {
+                perror("admin - parse() ");
+                return;
+            }
+            buf[lus] = '\0';
+
+        }
+
+        ParserMSG_init(p);
+        err = parse(buf,p);
+
+        if(err ==-1)
+        {
+            perror("admin - parse() ");
+            return;
+        }
+
+        if(p->msg_type == PASS)
+        {
+            if(strcmp(p->mess,pass) != 0)
+            {
+                return;
+            }
+        }
+
+    }
+    else
+    {
+        fprintf(stderr,"admin - poll() : aucune transmission\n");
+        return;
+    }
+
+    if(!strncmp(cmd,SHUTDOWN_CMD,4))
     {
         /** @todo appel de shut() */
     }
-    else if(!strncmp(p->mess,NBCONNEXIONS_CMD,4))
+    else if(!strncmp(cmd,NBCONNEXIONS_CMD,4))
     {
         nombreConnexions(sockclt,p);
     }
-    else if(!strncmp(p->mess,SIZEQUEUE_CMD,4))
+    else if(!strncmp(cmd,SIZEQUEUE_CMD,4))
     {
         nombreMSGdansFile(sockclt,p);
     }
-    else if(!strncmp(p->mess,SIZESTACK_CMD,4))
+    else if(!strncmp(cmd,SIZESTACK_CMD,4))
     {
         nombreMSGdansHisto(sockclt,p);
     }
@@ -1155,24 +1215,25 @@ void preparerMSG(char * msg)
 void help(int sock)
 {
     char msg[INFO_LENGTH];
-    char mess[] = "MESS <id> <msg> : envoyer un message \r\n";
-    char last[] = "LAST <numumber_of_msg> : avoir les derniers messages \r\n";
-    char root[] = "ROOT <cmd> : commande en mode root (cmd = {SHUT : éteindre le diffuseur, NBCO : nombre total de connexions}) \r\n";
+    char mess[] = "INFO MESS <id> <msg> : envoyer un message \r\n";
+    char last[] = "INFO LAST <numumber_of_msg> : avoir les derniers messages \r\n";
+    char root[] = "INFO ROOT <cmd> : mode root (cmd = {SHUT, NBCO, NBMS, NBMS}) \r\n";
+    char adm[] = "INFO {SHUT : éteindre diffuseur; NBCO : nombre total de connexions; NBMQ : nb msg en attente; NBMS : nb msg dans l'historique } \r\n";
     char radio[120];
-    char getf[] = "GETF <nom_fichier> : Reception d'un fichier (à venir) \r\n";
-    char setf[] = "SETF <nom_fichier> : Envoi d'un fichier (à venir) \r\n";
+    char getf[] = "INFO GETF <nom_fichier> : Reception d'un fichier \r\n";
+    char setf[] = "INFO SETF <nom_fichier> : Envoi d'un fichier \r\n";
 
 
     memset(radio,0,120);
-    strcpy(radio,"\n == Multicast ==\n");
+    strcpy(radio," == Multicast == @");
     strncat(radio,diff->ip_multicast,15);
-    strcat(radio," ");
+    strcat(radio," Port ");
     strncat(radio,diff->port_multicast,4);
-    strcat(radio,"\n == TCP ==\n");
+    strcat(radio," == TCP == @");
     strncat(radio,diff->ip_local,15);
-    strcat(radio," ");
+    strcat(radio," Port ");
     strncat(radio,diff->port_local,4);
-    strcat(radio," ");
+    strcat(radio," |");
 
     memset(msg,'\0',INFO_LENGTH);
 
@@ -1187,6 +1248,7 @@ void help(int sock)
     send(sock,mess,strlen(mess),MSG_NOSIGNAL);
     send(sock,last,strlen(last),MSG_NOSIGNAL);
     send(sock,root,strlen(root),MSG_NOSIGNAL);
+    send(sock,adm,strlen(adm),MSG_NOSIGNAL);
     send(sock,setf,strlen(setf),MSG_NOSIGNAL);
     send(sock,getf,strlen(getf),MSG_NOSIGNAL);
 
