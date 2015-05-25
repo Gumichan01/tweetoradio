@@ -17,11 +17,11 @@ struct Queue;
 struct Stack;
 
 
-
+/* Ces contantes sont spécifiques au diffuseur */
 #define NB_CLIENTS 1024
 #define SLEEP_TIME 8
 #define RECV_WAIT (30*1000)
-
+#define ACCEPT_WAIT (8*1000)
 
 typedef struct Diffuseur{
 
@@ -95,13 +95,13 @@ void downloadFile(int sockclt,ParsedMSG *p);
 
 void admin(int sockclt, ParsedMSG * p);
 
-void nombreConnexions(int sockclt, ParsedMSG * p);
+void nombreConnexions(int sockclt, ParsedMSG *p);
 
-void nombreMSGdansFile(int sockclt, ParsedMSG * p);
+void nombreMSGdansFile(int sockclt, ParsedMSG *p);
 
-void nombreMSGdansHisto(int sockclt, ParsedMSG * p);
+void nombreMSGdansHisto(int sockclt, ParsedMSG *p);
 
-void shut(int sockclt, ParsedMSG * p);
+void shut(int sockclt, ParsedMSG *p);
 
 void preparerMSG(char * msg);
 

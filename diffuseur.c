@@ -19,11 +19,12 @@ extern Diffuseur *diff;    /* Le diffuseur utilisé dans le main */
 
 static pthread_mutex_t verrouQ = PTHREAD_MUTEX_INITIALIZER;
 static pthread_mutex_t verrouH = PTHREAD_MUTEX_INITIALIZER;
+static pthread_mutex_t verrouShut = PTHREAD_MUTEX_INITIALIZER;
 
 static int num_mess = 0;
 static long nbConnexions = 0;
 
-
+static int shutValue = 0;
 
 void Diffuseur_init(Diffuseur *d)
 {
@@ -98,6 +99,7 @@ void * tcp_server(void *param)
     struct sockaddr_in clt;
 
     pthread_t th;
+    struct pollfd pfd;
 
     memset(&in, 0, sizeof(struct sockaddr));    /* Nettoyage */
 
@@ -147,41 +149,61 @@ void * tcp_server(void *param)
 
     sz = sizeof(in);
 
+    if(fcntl(sockserv,F_SETFL,O_NONBLOCK))
+    {
+        perror("tcp_request - Internal error : fcntl() ");
+        close(sockserv);
+        pthread_exit(NULL);
+    }
+
+    pfd.fd = sockserv;
+    pfd.events = POLLIN;
+
     while(1)
     {
-            sockclt = accept(sockserv,(struct sockaddr *) &clt,&sz);
+            err = poll(&pfd,1,ACCEPT_WAIT);
 
-            if(sockclt == -1)
+            if(err > 0)
             {
-                perror("tcp_server - accept() ");
-                break;
+                sockclt = accept(sockserv,(struct sockaddr *) &clt,&sz);
+
+                if(sockclt == -1)
+                {
+                    perror("tcp_server - accept() ");
+                    break;
+                }
+
+                printf("\nClient connecté - IP : %s | Port : %d \n",inet_ntoa(clt.sin_addr),ntohs(clt.sin_port));
+
+                /* On crée une structure relative au client */
+                clt_info = malloc(sizeof(Client_info));
+
+
+                if(clt_info == NULL)
+                {   /* On ne peut pas sous-traiter ça au thread, on ferme la connexion */
+                    perror("tcp_server - malloc() ");
+
+                    /* On envoie un message d'erreur */
+                    sprintf(err_msg,"SRVE Communication evec le serveur %.8s impossible\r\n",diff->id);
+                    send(sockclt,err_msg,strlen(err_msg),0);
+
+                    close(sockclt);
+                    continue;
+                }
+
+                /* On récupère les informations sur le client */
+                strcpy(clt_info->ip,inet_ntoa(clt.sin_addr));
+                clt_info->port = ntohs(clt.sin_port);
+                clt_info->sockclt = sockclt;
+
+                pthread_create(&th,NULL,tcp_request,clt_info);
+                nbConnexions++;
+            }
+            else if(err == -1)
+            {
+                perror("tcp_server - poll() ");
             }
 
-            printf("\nClient connecté - IP : %s | Port : %d \n",inet_ntoa(clt.sin_addr),ntohs(clt.sin_port));
-
-            /* On crée une structure relative au client */
-            clt_info = malloc(sizeof(Client_info));
-
-
-            if(clt_info == NULL)
-            {   /* On ne peut pas sous-traiter ça au thread, on ferme la connexion */
-                perror("tcp_server - malloc() ");
-
-                /* On envoie un message d'erreur */
-                sprintf(err_msg,"SRVE Communication evec le serveur %.8s impossible\r\n",diff->id);
-                send(sockclt,err_msg,strlen(err_msg),0);
-
-                close(sockclt);
-                continue;
-            }
-
-            /* On récupère les informations sur le client */
-            strcpy(clt_info->ip,inet_ntoa(clt.sin_addr));
-            clt_info->port = ntohs(clt.sin_port);
-            clt_info->sockclt = sockclt;
-
-            pthread_create(&th,NULL,tcp_request,clt_info);
-            nbConnexions++;
 
     }
 
@@ -945,6 +967,23 @@ void nombreMSGdansHisto(int sockclt, ParsedMSG * p)
         perror("nombreConnexions - send() ");
     }
 }
+
+
+void shut(int sockclt, ParsedMSG *p)
+{
+    if(send(sockclt,"ACKM\r\n",HEADER_MSG_LENGTH,MSG_NOSIGNAL) == -1)
+    {
+        perror("shut - send() ");
+    }
+
+    pthread_mutex_lock(&verrouShut);
+
+    if(shutValue == 0)
+        shutValue = 1;
+
+    pthread_mutex_unlock(&verrouShut);
+}
+
 
 
 void uploadFile(int sockclt,ParsedMSG *p)
