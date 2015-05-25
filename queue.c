@@ -69,7 +69,7 @@ Tweet * Queue_pop(Queue *q)
             q->head = q->head->next;
             r->next = NULL;
 
-            q->size = 0;
+            q->size -= 1;
         }
     }
 
