@@ -21,6 +21,8 @@ static pthread_mutex_t verrouQ = PTHREAD_MUTEX_INITIALIZER;
 static pthread_mutex_t verrouH = PTHREAD_MUTEX_INITIALIZER;
 
 static int num_mess = 0;
+static long nbConnexions = 0;
+
 
 
 void Diffuseur_init(Diffuseur *d)
@@ -179,6 +181,7 @@ void * tcp_server(void *param)
             clt_info->sockclt = sockclt;
 
             pthread_create(&th,NULL,tcp_request,clt_info);
+            nbConnexions++;
 
     }
 
@@ -698,6 +701,8 @@ void * inscription(void * param)
     sprintf(msg,"REGI %.8s %.15s %.4s %.15s %.4s\r\n",diff->id,diff->ip_multicast,diff->port_multicast,
                                                     diff->ip_local,diff->port_local);
 
+    printf("LOG : inscription - %s",msg);
+
     err = send(sock,msg,strlen(msg),MSG_NOSIGNAL);
 
     if(err == -1)
@@ -1053,10 +1058,22 @@ void help(int sock)
     char msg[INFO_LENGTH];
     char mess[] = "MESS <id> <msg> : envoyer un message \r\n";
     char last[] = "LAST <numumber_of_msg> : avoir les derniers messages \r\n";
-    char root[] = "ROOT <login> : acces administrateur (à venir) \r\n";
-    char radio[] = "Gumichan01 radio \nListe des commandes : \r\n";
+    char root[] = "ROOT <cmd> : commande en mode root (SHUT, NBCO) \r\n";
+    char radio[120];
     char getf[] = "GETF <nom_fichier> : Reception d'un fichier (à venir) \r\n";
     char setf[] = "SETF <nom_fichier> : Envoi d'un fichier (à venir) \r\n";
+
+
+    memset(radio,0,120);
+    strcpy(radio,"\n == Multicast ==\n");
+    strncat(radio,diff->ip_multicast,15);
+    strcat(radio," ");
+    strncat(radio,diff->port_multicast,4);
+    strcat(radio,"\n == TCP ==\n");
+    strncat(radio,diff->ip_local,15);
+    strcat(radio," ");
+    strncat(radio,diff->port_local,4);
+    strcat(radio," ");
 
     memset(msg,'\0',INFO_LENGTH);
 
