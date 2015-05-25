@@ -971,10 +971,17 @@ void nombreMSGdansHisto(int sockclt, ParsedMSG * p)
 
 void shut(int sockclt, ParsedMSG *p)
 {
+    char msg[MSG_LENGTH];
+
     if(send(sockclt,"ACKM\r\n",HEADER_MSG_LENGTH,MSG_NOSIGNAL) == -1)
     {
         perror("shut - send() ");
     }
+
+    memset(msg,0, MSG_LENGTH);
+
+    sprintf(msg,"\n==== SHUTDOWN ====\nMessage du diffuseur %.8s - Extinction : veuillez vous désabonner \n==== SHUTDOWN ====\n",diff->id);
+    preparerMSG(msg);
 
     pthread_mutex_lock(&verrouShut);
 
