@@ -26,6 +26,7 @@ int main(int argc, char **argv)
 {
 
     int len;
+    int port1, port2;
     pthread_t thread;
     pthread_t thread_gest;
     pthread_t thread_multi;
@@ -66,8 +67,14 @@ int main(int argc, char **argv)
     /* On remplit les champs du diffuseur */
     ip_to15(argv[2],diff->ip_multicast);
 
-    strncpy(diff->port_multicast,argv[3],PORT_LENGTH);
-    strncpy(diff->port_local,argv[4],PORT_LENGTH);
+    port1 = atoi(argv[3]);
+    port2 = atoi(argv[4]);
+
+    int_to_char(port1,diff->port_multicast);
+    int_to_char(port2,diff->port_local);
+
+    /*strncpy(diff->port_multicast,argv[3],PORT_LENGTH);
+    strncpy(diff->port_local,argv[4],PORT_LENGTH);*/
 
     pthread_create(&thread,NULL,tcp_server,NULL);
     pthread_create(&thread_gest,NULL,inscription,&g);

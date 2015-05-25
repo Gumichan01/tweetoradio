@@ -108,6 +108,11 @@ void * tcp_server(void *param)
     if(sockserv == -1)
     {
         perror("tcp_server - socket() ");
+
+        pthread_mutex_lock(&verrouShut);
+        shutValue = 1;
+        pthread_mutex_unlock(&verrouShut);
+
         pthread_exit(NULL);
     }
 
@@ -121,6 +126,11 @@ void * tcp_server(void *param)
     if(err == -1)
     {
         perror("tcp_server - ip_from15() ");
+
+        pthread_mutex_lock(&verrouShut);
+        shutValue = 1;
+        pthread_mutex_unlock(&verrouShut);
+
         close(sockserv);
         pthread_exit(NULL);
     }
@@ -132,6 +142,11 @@ void * tcp_server(void *param)
     if(err == -1)
     {
         perror("tcp_server - bind() ");
+
+        pthread_mutex_lock(&verrouShut);
+        shutValue = 1;
+        pthread_mutex_unlock(&verrouShut);
+
         close(sockserv);
         pthread_exit(NULL);
     }
@@ -141,6 +156,11 @@ void * tcp_server(void *param)
     if(err == -1)
     {
         perror("tcp_server - listen() ");
+
+        pthread_mutex_lock(&verrouShut);
+        shutValue = 1;
+        pthread_mutex_unlock(&verrouShut);
+
         close(sockserv);
         pthread_exit(NULL);
     }
@@ -152,6 +172,11 @@ void * tcp_server(void *param)
     if(fcntl(sockserv,F_SETFL,O_NONBLOCK))
     {
         perror("tcp_request - Internal error : fcntl() ");
+
+        pthread_mutex_lock(&verrouShut);
+        shutValue = 1;
+        pthread_mutex_unlock(&verrouShut);
+
         close(sockserv);
         pthread_exit(NULL);
     }
