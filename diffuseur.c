@@ -955,19 +955,19 @@ void admin(int sockclt, ParsedMSG * p)
         return;
     }
 
-    if(!strncmp(cmd,SHUTDOWN_CMD,4))
+    if(!strcmp(cmd,SHUTDOWN_CMD))
     {
         shut(sockclt,p);
     }
-    else if(!strncmp(cmd,NBCONNEXIONS_CMD,4))
+    else if(!strcmp(cmd,NBCONNEXIONS_CMD))
     {
         nombreConnexions(sockclt,p);
     }
-    else if(!strncmp(cmd,SIZEQUEUE_CMD,4))
+    else if(!strcmp(cmd,SIZEQUEUE_CMD))
     {
         nombreMSGdansFile(sockclt,p);
     }
-    else if(!strncmp(cmd,SIZESTACK_CMD,4))
+    else if(!strcmp(cmd,SIZESTACK_CMD))
     {
         nombreMSGdansHisto(sockclt,p);
     }

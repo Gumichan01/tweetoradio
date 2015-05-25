@@ -165,14 +165,14 @@ int parse(const char *str, ParsedMSG * p)
     else if(!strncmp(str,"ROOT",4))
     {
         p->msg_type = ROOT;
-        err = sscanf(str,"ROOT%c%[A-Z]\r\n",&sp1,p->mess);
+        err = sscanf(str,"ROOT%c%[A-Z\r\n]",&sp1,p->mess);
 
         if(err <= 0 || sp1 != ' ')
             err = (sp1 != space) ? 0:err;
         else
         {
-            if(strncmp(p->mess,"SHUT",4) != 0 && strncmp(p->mess,"NBCO",4) != 0
-                && strncmp(p->mess,"NBMQ",4) != 0 && strncmp(p->mess,"NBMS",4) != 0)
+            if(strncmp(p->mess,"SHUT\r\n",6) != 0 && strncmp(p->mess,"NBCO\r\n",6) != 0
+                && strncmp(p->mess,"NBMQ\r\n",6) != 0 && strncmp(p->mess,"NBMS\r\n",6) != 0)
                 err = 0;
             else
                 err = 1;
