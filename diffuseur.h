@@ -22,6 +22,7 @@ struct Stack;
 #define SLEEP_TIME 8
 #define RECV_WAIT (30*1000)
 #define ACCEPT_WAIT (8*1000)
+#define GEST_WAIT (4*1000)
 
 typedef struct Diffuseur{
 

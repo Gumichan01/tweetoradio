@@ -694,8 +694,9 @@ void * inscription(void * param)
 {
     Gest_info *g = (Gest_info *) param;
     ParsedMSG p;
+    struct pollfd pfd;
 
-    int sock;
+    int sock, stop = 0;
     struct sockaddr_in in;
 
     int err, sz;
@@ -780,9 +781,22 @@ void * inscription(void * param)
         default: break;
     }
 
-    if(inscrit)
+
+    if(fcntl(sock,F_SETFL,O_NONBLOCK) == -1)
     {
-        while(1)
+        perror("tcp_request - Internal error : fcntl() ");
+        close(sock);
+        pthread_exit(NULL);
+    }
+
+    pfd.fd = sock;
+    pfd.events = POLLIN;
+
+    while(inscrit)
+    {
+        err = poll(&pfd,1,GEST_WAIT);
+
+        if(err > 0)
         {
             lus = recv(sock,msg,HEADER_MSG_LENGTH,0);
 
@@ -791,7 +805,6 @@ void * inscription(void * param)
                 perror("inscription LOOP - recv() ");
                 break;
             }
-
 
             if(parse(msg,&p) == -1)     /* Message connu ? */
             {
@@ -812,8 +825,18 @@ void * inscription(void * param)
             else
                 break;
         }
-    }
+        else if(err == -1)
+        {
+            perror("inscirption - poll() ");
+        }
 
+        pthread_mutex_lock(&verrouShut);
+        stop = shutValue;
+        pthread_mutex_unlock(&verrouShut);
+
+        if(stop == 1)
+            break;
+    }
 
     close(sock);
     pthread_exit(NULL);
