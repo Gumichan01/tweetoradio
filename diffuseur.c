@@ -87,7 +87,7 @@ int int_to_char(int n,char *str)
 void * tcp_server(void *param)
 {
 
-    int err;
+    int err, stop = 0;
     int sockserv;
     int sockclt;
     Client_info * clt_info = NULL;
@@ -184,7 +184,7 @@ void * tcp_server(void *param)
                     perror("tcp_server - malloc() ");
 
                     /* On envoie un message d'erreur */
-                    sprintf(err_msg,"SRVE Communication evec le serveur %.8s impossible\r\n",diff->id);
+                    sprintf(err_msg,"SRVE Communication avec le serveur %.8s impossible\r\n",diff->id);
                     send(sockclt,err_msg,strlen(err_msg),0);
 
                     close(sockclt);
@@ -204,11 +204,17 @@ void * tcp_server(void *param)
                 perror("tcp_server - poll() ");
             }
 
+            pthread_mutex_lock(&verrouShut);
+            stop = shutValue;
+            pthread_mutex_unlock(&verrouShut);
 
+            if(stop == 1)
+                break;
     }
 
-    close(sockserv);
+    printf("tcp_server - Terminaison serveur TCP du diffuseur | Fin TCP.\n");
 
+    close(sockserv);
     pthread_exit(NULL);
 }
 
@@ -750,38 +756,6 @@ void * inscription(void * param)
 
     memset(msg,0,REGI_LENGTH);
 
-    lus = recv(sock,msg,HEADER_MSG_LENGTH,0);
-
-    if(lus == -1)
-    {
-        perror("inscription - recv() ");
-        close(sock);
-        pthread_exit(NULL);
-    }
-
-    err = parse(msg,&p);
-
-    if(err == -1)
-    {
-        perror("inscription - parse() ");
-        close(sock);
-        pthread_exit(NULL);
-    }
-
-    switch(p.msg_type)
-    {
-        case REOK : printf("Multidiffuseur %.8s : Inscription OK \n",diff->id);
-                    inscrit = 1;
-                    break;
-
-        case RENO : fprintf(stderr,"Multidiffuseur %.8s : Impossible de s'inscrire auprès du gestionnaire - %s %d\n",
-                                                                    diff->id,g->ip,g->port);
-                    break;
-
-        default: break;
-    }
-
-
     if(fcntl(sock,F_SETFL,O_NONBLOCK) == -1)
     {
         perror("tcp_request - Internal error : fcntl() ");
@@ -791,6 +765,55 @@ void * inscription(void * param)
 
     pfd.fd = sock;
     pfd.events = POLLIN;
+
+    err = poll(&pfd,1,GEST_WAIT);
+
+    if(err > 0)
+    {
+        lus = recv(sock,msg,HEADER_MSG_LENGTH,0);
+
+        if(lus == -1)
+        {
+            perror("inscription - recv() ");
+            close(sock);
+            pthread_exit(NULL);
+        }
+
+        err = parse(msg,&p);
+
+        if(err == -1)
+        {
+            perror("inscription - parse() ");
+            close(sock);
+            pthread_exit(NULL);
+        }
+
+        switch(p.msg_type)
+        {
+            case REOK : printf("Multidiffuseur %.8s : Inscription OK \n",diff->id);
+                        inscrit = 1;
+                        break;
+
+            case RENO : fprintf(stderr,"Multidiffuseur %.8s : Impossible de s'inscrire auprès du gestionnaire - %s %d\n",
+                                                                        diff->id,g->ip,g->port);
+                        break;
+
+            default: break;
+        }
+    }
+    else
+    {
+        if(err == -1)
+            perror("inscription - poll() ");
+        else
+            printf("inscription - Aucune réponse du gestionnaire | Fin de l'inscription.\n");
+
+
+        close(sock);
+        pthread_exit(NULL);
+    }
+
+
 
     while(inscrit)
     {
@@ -837,6 +860,8 @@ void * inscription(void * param)
         if(stop == 1)
             break;
     }
+
+    printf("inscription - Terminaison thread inscription | Fin de l'inscription.\n");
 
     close(sock);
     pthread_exit(NULL);
