@@ -32,5 +32,8 @@
 #define MAX_SLOT 10             /* Identifiant max du slot */
 
 
+#define SHUTDOWN_CMD "SHUT"     /* Commande d'extinction */
+#define NBCONNEXIONS_CMD "NBCO"  /* Commande d'obtention du nombre total de connexions*/
+
 #endif /* CONST_INCLUDED_H */
 

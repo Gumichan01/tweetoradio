@@ -329,6 +329,11 @@ void * tcp_request(void * param)
                     }
                     break;
 
+        case ROOT : {
+                        admin(sockclt,&p);
+                    }
+                    break;
+
         default :  err = 0;
                     break;
     }
@@ -688,7 +693,6 @@ void * inscription(void * param)
 
     sz = sizeof(in);
 
-
     err = connect(sock, (struct sockaddr *) &in,sz);
 
     if(err == -1)
@@ -781,11 +785,43 @@ void * inscription(void * param)
 
 
     close(sock);
-
     pthread_exit(NULL);
 }
 
 
+/*
+    Execute une commande en tant qu'administrateur
+*/
+void admin(int sockclt, ParsedMSG * p)
+{
+
+    if(!strncmp(p->mess,SHUTDOWN_CMD,4))
+    {
+        /** @todo appel de shut() */
+    }
+    else if(!strncmp(p->mess,NBCONNEXIONS_CMD,4))
+    {
+        nombreConnexions(sockclt,p);
+    }
+
+
+}
+
+
+void nombreConnexions(int sockclt, ParsedMSG * p)
+{
+    char msg[MSG_LENGTH];
+    int err;
+
+    sprintf(msg,"INFO = %.8s = Nombre total de connexions TCP depuis le démarrage : %ld \r\n",diff->id, nbConnexions);
+
+    err = send(sockclt,msg,strlen(msg),MSG_NOSIGNAL);
+
+    if(err ==-1)
+    {
+        perror("nombreConnexions - send() ");
+    }
+}
 
 
 void uploadFile(int sockclt,ParsedMSG *p)
@@ -1058,7 +1094,7 @@ void help(int sock)
     char msg[INFO_LENGTH];
     char mess[] = "MESS <id> <msg> : envoyer un message \r\n";
     char last[] = "LAST <numumber_of_msg> : avoir les derniers messages \r\n";
-    char root[] = "ROOT <cmd> : commande en mode root (SHUT, NBCO) \r\n";
+    char root[] = "ROOT <cmd> : commande en mode root (cmd = {SHUT : éteindre le diffuseur, NBCO : nombre total de connexions}) \r\n";
     char radio[120];
     char getf[] = "GETF <nom_fichier> : Reception d'un fichier (à venir) \r\n";
     char setf[] = "SETF <nom_fichier> : Envoi d'un fichier (à venir) \r\n";
