@@ -516,6 +516,7 @@ void * multicastDiffuseur(void * param)
 {
     int err;
     int sock_multicast;
+    int stop = 0; /* To stop the multicast */
 
     socklen_t sz;
     struct sockaddr *in;
@@ -542,7 +543,7 @@ void * multicastDiffuseur(void * param)
 
     if(sock_multicast == -1)
     {
-        perror("multicast_diffuser - socket() ");
+        perror("multicastDiffuseur - socket() ");
         pthread_exit(NULL);
     }
 
@@ -559,7 +560,7 @@ void * multicastDiffuseur(void * param)
 
     if(err == -1)
     {
-        perror("multicast_diffuser - ip_from15() ");
+        perror("multicastDiffuseur - ip_from15() ");
         close(sock_multicast);
         pthread_exit(NULL);
     }
@@ -571,7 +572,7 @@ void * multicastDiffuseur(void * param)
 
     if(err != 0)
     {
-        perror("multicast_diffuser - getaddrinfo() ");
+        perror("multicastDiffuseur - getaddrinfo() ");
         close(sock_multicast);
         pthread_exit(NULL);
     }
@@ -587,52 +588,58 @@ void * multicastDiffuseur(void * param)
 
         while(1)
         {
-            sleep(SLEEP_TIME);
+            pthread_mutex_lock(&verrouShut);
+            stop = shutValue;
+            pthread_mutex_unlock(&verrouShut);
 
-            if(diff->file_attente != NULL && diff->file_attente->head != NULL)
-                Queue_display(diff->file_attente);
+            if(stop == 0)
+            {
+                sleep(SLEEP_TIME);
+            }
+
+            /*if(diff->file_attente != NULL && diff->file_attente->head != NULL)
+                Queue_display(diff->file_attente);*/
 
             /* On récupère le prochain tweet à diffuser */
             pthread_mutex_lock(&verrouQ);
             t = Queue_pop(diff->file_attente);
             pthread_mutex_unlock(&verrouQ);
 
-            if(t == NULL)
-            {
-                continue;   /* On n'a rien à afficher, on revient en début de boucle */
-            }
-            else
+            if(t != NULL)
             {
                 Tweet_toString(t,str,&st);
 
-                printf("Multidiffuseur %.8s - Nouveau tweet à diffuser :\n",diff->id);
-                printf("Multidiffuseur %.8s - ",diff->id);
+                printf("\nMultidiffuseur %.8s - nouveau tweet :\n",diff->id);
+                /*printf("Multidiffuseur %.8s - ",diff->id);*/
                 fflush(stdout);
 
                 write(1,str,Tweet_str_length(str));
                 fflush(stdout);
                 printf("\n");
+
+                pthread_mutex_lock(&verrouH);
+                err = sauvegarderTweet(t);
+                pthread_mutex_unlock(&verrouH);
+
+                if(err == -1)
+                {
+                    fprintf(stderr,"Multidiffuseur %.8s - Echec de la sauvegarde du tweet\n",diff->id);
+                }
+                else
+                {
+                    t = NULL;
+                }
+
+                err = sendto(sock_multicast,str,TWEET_LENGTH,0,in,sz);
+
+                if(err == -1)
+                {
+                    perror("multicastDiffuseur - sendto() ");
+                }
             }
 
-            pthread_mutex_lock(&verrouH);
-            err = sauvegarderTweet(t);
-            pthread_mutex_unlock(&verrouH);
-
-            if(err == -1)
-            {
-                fprintf(stderr,"Multidiffuseur %.8s - Echec de la sauvegarde du tweet\n",diff->id);
-            }
-            else
-            {
-                t = NULL;
-            }
-
-            err = sendto(sock_multicast,str,TWEET_LENGTH,0,in,sz);
-
-            if(err == -1)
-            {
-                perror("multicast_diffuser - sendto() ");
-            }
+            if(stop == 1 && (diff->file_attente == NULL  || (diff->file_attente != NULL && diff->file_attente->size == 0)))
+                break;
 
         }
 
@@ -640,6 +647,8 @@ void * multicastDiffuseur(void * param)
 
     freeaddrinfo(res);
     close(sock_multicast);
+
+    printf("multicastDiffuseur - Extinction du multidiffuseur | Fin de la diffusion. \n");
 
     pthread_exit(NULL);
 }
