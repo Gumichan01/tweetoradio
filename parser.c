@@ -162,6 +162,22 @@ int parse(const char *str, ParsedMSG * p)
             err = (sp1 != space) ? 0:err;
 
     }
+    else if(!strncmp(str,"ROOT",4))
+    {
+        p->msg_type = ROOT;
+        err = sscanf(str,"ROOT%c%[A-Z]\r\n",&sp1,p->mess);
+
+        if(err <= 0 || sp1 != ' ')
+            err = (sp1 != space) ? 0:err;
+        else
+        {
+            if(strncmp(p->mess,"SHUT",4) != 0 && strncmp(p->mess,"NBCO",4) != 0)
+                err = 0;
+            else
+                err = 1;
+        }
+
+    }
     else if(!strncmp(str,"ENDF\r\n",HEADER_MSG_LENGTH))
     {
         p->msg_type = ENDF;

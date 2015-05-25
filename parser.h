@@ -26,6 +26,7 @@
     - LIST : Messages envoyés par l'utilisateur au gestionnaire
     - INFO : Message envoyé par le client au diffuseur pour avoir des informations
     - DATA, ENDF : client/diffuseur ou diffuseur/client
+    - ROOT : client/diffuseur
     - NO_TYPE : Pas de type défini
 
     NOTE :
@@ -38,7 +39,7 @@
         ne sera pas intégrée.
 
 */
-typedef enum{MESS,LAST,REGI,REOK,RENO,RUOK,IMOK,LIST,INFO,SETF,GETF,DATA,ENDF,NO_TYPE} ReceivedMSG_type;
+typedef enum{MESS,LAST,REGI,REOK,RENO,RUOK,IMOK,LIST,INFO,SETF,GETF,DATA,ENDF,ROOT,NO_TYPE} ReceivedMSG_type;
 
 
 /*
