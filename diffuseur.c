@@ -541,10 +541,6 @@ void * multicastDiffuseur(void * param)
 
     /* On initialise le multidiffuseur */
 
-    /* On rend le thread indépendant */
-    pthread_detach(pthread_self());
-
-
     sock_multicast = socket(PF_INET,SOCK_DGRAM,0);
 
     if(sock_multicast == -1)

@@ -74,6 +74,7 @@ int main(int argc, char **argv)
     pthread_create(&thread_multi,NULL,multicastDiffuseur,NULL);
 
     pthread_join(thread,NULL);
+    pthread_join(thread_multi,NULL);
 
     if(diff->file_attente != NULL)
         Queue_clean_up(diff->file_attente);
