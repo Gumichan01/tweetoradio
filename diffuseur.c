@@ -879,7 +879,7 @@ void admin(int sockclt, ParsedMSG * p)
 
     if(!strncmp(cmd,SHUTDOWN_CMD,4))
     {
-        /** @todo appel de shut() */
+        shut(sockclt,p);
     }
     else if(!strncmp(cmd,NBCONNEXIONS_CMD,4))
     {
