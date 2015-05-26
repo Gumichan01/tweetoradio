@@ -1,6 +1,7 @@
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -51,7 +52,7 @@ class FileShare{
 				envoi(socket, r, w, nomFichier);
 				
 			}else if(opt.equals("-g")){
-				
+				reception(socket, r, w, nomFichier);
 			}else{
 				
 				System.err.println("Option invalide");
@@ -102,27 +103,35 @@ class FileShare{
 			
 			System.out.println("Envoi fichier " +nomFichier);
 			
-			while((n = fr.read(buf)) != -1){
-		
-				s = new String(buf,0,n);
-				cmd = "DATA " + s + CR + LF;
-				//System.out.println(s + "\n OKDOKI GO");
-				System.out.println("DATA " + s + CR + LF);
+			try{
 				
-				w.write("DATA " + s + CR + LF);
-				w.flush();
-				buf = new byte[140];
-				
-				try{
-					// On temporise pour laisser le temps au diffuseur 
-					// de récupérer les informations
-					Thread.sleep(1000);
-				}catch(Exception e){	
-					e.printStackTrace();
+				while((n = fr.read(buf)) != -1){
+					
+					s = new String(buf,0,n);
+					cmd = "DATA " + s + CR + LF;
+					//System.out.println(s + "\n OKDOKI GO");
+					System.out.println("DATA " + s + CR + LF);
+					
+					w.write("DATA " + s + CR + LF);
+					w.flush();
+					buf = new byte[140];
+					
+					try{
+						// On temporise pour laisser le temps au diffuseur 
+						// de récupérer les informations
+						Thread.sleep(1000);
+					}catch(Exception e){	
+						e.printStackTrace();
+					}
+					
 				}
 				
+			}finally{
+				
+				fr.close();
 			}
-
+			
+			
 			// Fin dumessage
 			w.write("ENDF" + CR + LF);
 			w.flush();
@@ -144,7 +153,46 @@ class FileShare{
 	}
 	
 	
-	public static void reception(Socket socket,BufferedReader r, PrintWriter w, String nomFichier){
+	public static void reception(Socket socket,BufferedReader r, PrintWriter w, String nomFichier) throws IOException{
+		
+
+		String s = null;
+		
+		int n;
+		char [] cbuf = new char[140 + 5 +2];
+		byte [] buf = new byte[140 + 5 +2]; 
+		FileOutputStream fr = new FileOutputStream(new File(nomFichier));	
+		
+		
+		try{
+			
+			w.write("GETF " + nomFichier + CR + LF);
+			w.flush();
+
+			
+			//System.out.println(s);
+			
+			while((n = r.read(cbuf)) != -1
+					&& new String(cbuf,0,n).subSequence(0, 5).equals("DATA ")){
+				
+				s = new String(cbuf,0,n);
+
+				System.out.println("Recu  "+n + " octets depuis le diffuseur");
+				
+				
+				fr.write(s.substring(5, n).getBytes());
+				fr.flush();
+				
+			}
+			
+			System.out.println("Fin de reception");
+			
+			
+		}finally{
+			
+			fr.close();
+		}
+		
 		
 		
 	}
