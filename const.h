@@ -36,6 +36,7 @@
 
 #define MAX_NUM_DIFFUSEUR 99    /* Identifiant max du diffuseur */
 
+#define NB_CLIENTS 1024         /* Nombre de clients maximum par serveur*/
 
 #define SHUTDOWN_CMD "SHUT"     /* Commande d'extinction */
 #define NBCONNEXIONS_CMD "NBCO" /* Commande d'obtention du nombre total de connexions*/
