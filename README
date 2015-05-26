@@ -54,7 +54,17 @@ Groupe :
 == Extensions  ==
 
 
- I/ Partage de fichiers
+ I/ Information et aide
+
+ La commande INFO (ou HELP) permet d'avoir la liste des commandes disponibles
+ d'un diffuseur.
+
+ Instruction associées :
+
+ - INFO : Récupère les informations dur les commandes utilisables
+ - HELP : Fait la même chose que INFO
+
+ II/ Partage de fichiers
 
  Le diffuseur prend désormais en charge le partage de fichier.
  L'utilisateur peut mettre en ligne en fichier et en récupérer un.
@@ -70,9 +80,30 @@ Groupe :
 
 
 
- II / Administration Système
+ III / Administration Système
  
- # A venir
+ Le diffuseur contient une interface d'administration permettant
+ d'avoir des informations relaitve au système.
+ On peut connaitre le nombre totale de connexxions effectuées, 
+ le nombre de messages en attente de diffusion ou stockés dans l'historique,
+ et on peut même éteindre le diffuseur à distance.
+ Ces commande ne sont accessible que lorsqu'on s'est authentifié.
+
+ mdp : admin
+
+ Instruction associées :
+
+ - ROOT <cmd> : Execution de la commande <cmd> en tant qu'admin
+ - PSWD : Demande de mot de passe (envoyé par e diffuseur)
+ - PASS <mdp> : Mot de passe à donner au diffuseur
+
+ Les commandes <cmd> sont : 
+ 
+ - NBCO : Nombre total de connexions depuis le démarrage
+ - NBMQ : Nombre de message en attente de diffusion
+ - NBMS : Nombre de message dans l'historique
+ - SHUT : Extinction du diffuseur
+
 
 == Problèmes rencontrés  ==
 
