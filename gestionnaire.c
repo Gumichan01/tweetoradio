@@ -549,6 +549,7 @@ int check_diffuseur(int index, int sockDiff)
 		num_diff -= 1;
 		int_to_char_num_diff(num_diff, gest->num_diff);
 		free(gest->slot[index]);
+		gest->slot[index] = NULL;
 
 		return -1;
 	}
@@ -560,6 +561,7 @@ int check_diffuseur(int index, int sockDiff)
 		num_diff -= 1;
 		int_to_char_num_diff(num_diff, gest->num_diff);
 		free(gest->slot[index]);
+		gest->slot[index] = NULL;
 
 		return -1;
 	}
@@ -572,6 +574,7 @@ int check_diffuseur(int index, int sockDiff)
 		num_diff -= 1;
 		int_to_char_num_diff(num_diff, gest->num_diff);
 		free(gest->slot[index]);
+		gest->slot[index] = NULL;
 
 		return -1;
 	}
@@ -589,6 +592,7 @@ int check_diffuseur(int index, int sockDiff)
                         num_diff -= 1;
                         int_to_char_num_diff(num_diff, gest->num_diff);
                         free(gest->slot[index]);
+                        gest->slot[index] = NULL;
                         err = -1;
                     }
                     break;
