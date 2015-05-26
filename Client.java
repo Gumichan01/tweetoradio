@@ -96,10 +96,17 @@ public class Client implements Communication {
     }
 
     private void get_listDiff(String type) throws IOException {
+        
         String msgSend, msgRcv;
-        String id = new String(), ip_multicast = new String(), port_multicast = new String(),
-                ip_machine = new String(), port_machine = new String();
+        
+        String id = new String();
+        String ip_multicast = new String();
+        String port_multicast = new String();
+        String ip_machine = new String();
+        String port_machine = new String();
+
         Integer num_diff;
+        
         int index = 5;
 
         msgSend = type + "\r\n";
@@ -147,28 +154,35 @@ public class Client implements Communication {
     }
 
     private void get_listTweets(String type, Scanner sc) throws IOException {
-        String msgSend, msgRcv, nb_mess, id, num_mess, tweet;
+        String msgSend, msgRcv, nb_mess;
+        String id, num_mess, tweet;
 
         System.out.println("Ecrire le nombre de message que vous voulez lire : \n");
         nb_mess = int_to_string_nb_mess(sc.nextInt());
+        
         if (nb_mess == null) {
             System.err.println("nb_mess à voir incorrect - sendto()");
             pw.close();
             br.close();
         }
+        
         msgSend = type + " " + nb_mess + "\r\n";
         pw.print(msgSend);
         pw.flush();
 
         for (int i = 0; i < Integer.parseInt(nb_mess); i++) {
             msgRcv = br.readLine();
+            
             if (msgRcv != null) {
+                
                 if (msgRcv.substring(0, 4).equals("OLDM")) {
                     num_mess = msgRcv.substring(5, 9);
                     id = msgRcv.substring(9, 18);
                     tweet = msgRcv.substring(19, msgRcv.length());
                     listTweet.put(num_mess, new Tweet(id, num_mess, tweet));
+                
                 } else {
+                
                     if (msgRcv.substring(0, 4).equals("ENDM")) {
                         System.out.println("ENDM");
                         return;
@@ -177,6 +191,7 @@ public class Client implements Communication {
                         return;
                     }
                 }
+            
             } else {
                 System.err.println("erreur - sendto()");
                 return;
@@ -261,25 +276,31 @@ public class Client implements Communication {
     public void send_udp() {
         Scanner sc = new Scanner(System.in);
         String msgSend = "", msgRcv, ip, type_msg, tweet;
+        
         byte[] dataSend, dataRcv = new byte["ACKM\r\n".getBytes().length];
         int port;
+        
         try {
             DatagramSocket dso = new DatagramSocket();
             System.out.println("Entrez l'adresse ip multicast : ");
             ip = sc.next();
+        
             System.out.println("Entrez son port : ");
             port = sc.nextInt();
             InetSocketAddress ia = new InetSocketAddress(ip, port);
+        
             System.out.println("Ecrire le type message à envoyer : \n");
             type_msg = sc.next();
 
             if (type_msg.substring(0, 4).equals("MESS")) {
                 System.out.println("Ecrire le message que vous voulez envoyer : \n");
                 tweet = sc.next();
+        
                 while (tweet.length() > 140) {
                     System.out.println("Message trop grand. Recommencez : \n");
                     tweet = sc.next();
                 }
+        
                 msgSend += type_msg + " " + identifiant + " " + tweet + "\r\n";
                 dataSend = msgSend.getBytes();
                 DatagramPacket paquet = new DatagramPacket(dataSend, dataSend.length, port);
@@ -287,6 +308,7 @@ public class Client implements Communication {
                 paquet = new DatagramPacket(dataRcv, dataRcv.length, port);
                 dso.receive(paquet);
                 msgRcv = new String(paquet.getData(), 0, paquet.getLength());
+        
                 if (msgRcv.substring(0, msgRcv.length()).equals("ACKM\r\n")) {
                     System.out.println("Réception du tweet par le diffuseur.\n");
                     dso.close();
