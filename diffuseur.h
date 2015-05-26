@@ -18,7 +18,6 @@ struct Stack;
 
 
 /* Ces contantes sont spécifiques au diffuseur */
-#define NB_CLIENTS 1024
 #define SLEEP_TIME 8
 #define RECV_WAIT (30*1000)
 #define ACCEPT_WAIT (8*1000)

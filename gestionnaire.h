@@ -7,7 +7,6 @@
 #include "ip_convert.h"
 #include "tweet_posix_lib.h"
 
-#define NB_CLIENTS 1024
 #define CHECK_LENGTH 30
 
 
@@ -32,7 +31,7 @@ typedef struct Gestionnaire{
 	char port_local_diff[PORT_LENGTH];
 	char port_local_clt[PORT_LENGTH];
 
-	DiffuseurInfo slot[MAX_SLOT];
+	DiffuseurInfo *slot[MAX_SLOT];
 
 	char num_diff[NUM_DIFF_LENGTH];
 
