@@ -15,6 +15,7 @@
 
 #include "diffuseur.h"
 #include "ip_convert.h"
+#include "annexe.h"
 
 #include "queue.h"
 #include "stack.h"
