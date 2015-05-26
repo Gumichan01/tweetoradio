@@ -1248,6 +1248,8 @@ void downloadFile(int sockclt,ParsedMSG *p)
             ok = 0;
             break;
         }
+
+        sleep(1);
     }
 
     if(ok)
