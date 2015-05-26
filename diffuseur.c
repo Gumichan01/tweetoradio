@@ -1064,6 +1064,7 @@ void uploadFile(int sockclt,ParsedMSG *p)
     char nom[MSG_LENGTH];
     char buf[INFO_LENGTH];
     char nullStr[MSG_LENGTH];
+    char *b = NULL;
     int err, lus, fd;
     int ok = 1;
     struct pollfd pfd;
@@ -1072,14 +1073,22 @@ void uploadFile(int sockclt,ParsedMSG *p)
     pfd.events = POLLIN;
 
     /* Test pré-condition */
-    strcpy(nom,p->mess);
+    b = basename(p->mess);
+
+    if(b == NULL)
+    {
+        perror("basename ");
+        return;
+    }
+
+    strcpy(nom,b);
     memset(nullStr,0,MSG_LENGTH);
 
     if(!strcmp(p->mess,nullStr))
         return;
 
     /* Si on a un chemin */
-    mkdirP(dirname(p->mess));
+    /*mkdirP(dirname(p->mess));*/
 
 
     fd = creat(nom, 0600);
