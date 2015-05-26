@@ -1,5 +1,6 @@
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -81,10 +82,11 @@ class FileShare{
 	public static void envoi(Socket socket,BufferedReader r, PrintWriter w, String nomFichier) throws IOException{
 		
 		String cmd = "SETF " + nomFichier + CR + LF;
+		String s;
 		
 		char [] cbuf = new char[6];
-		char [] buf = new char[140]; 
-		BufferedReader fr = new BufferedReader(new FileReader(new File(nomFichier)));
+		byte [] buf = new byte[140]; 
+		FileInputStream fr = new FileInputStream(new File(nomFichier));
 		
 		
 		w.write(cmd.toCharArray());
@@ -94,19 +96,35 @@ class FileShare{
 		
 		System.out.println("Recu :  "+ new String(cbuf));
 		
+		int n;
+		
 		if(new String(cbuf,0,6).equals("GIVE\r\n")){
 			
 			System.out.println("Envoi fichier " +nomFichier);
 			
-			while(fr.read(buf) != -1){
+			while((n = fr.read(buf)) != -1){
+		
+				s = new String(buf,0,n);
+				cmd = "DATA " + s + CR + LF;
+				//System.out.println(s + "\n OKDOKI GO");
+				System.out.println("DATA " + s + CR + LF);
 				
-				cmd = "DATA " + new String(buf) + CR + LF;
-				w.write(cmd.toCharArray());
+				w.write("DATA " + s + CR + LF);
 				w.flush();
+				buf = new byte[140];
+				
+				try{
+					// On temporise pour laisser le temps au diffuseur 
+					// de récupérer les informations
+					Thread.sleep(1000);
+				}catch(Exception e){	
+					e.printStackTrace();
+				}
+				
 			}
-			
-			cmd = "ENDF" + CR + LF;
-			w.write(cmd.toCharArray());
+
+			// Fin dumessage
+			w.write("ENDF" + CR + LF);
 			w.flush();
 			
 			r.read(cbuf);
