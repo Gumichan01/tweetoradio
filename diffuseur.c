@@ -249,7 +249,7 @@ void * tcp_request(void * param)
 
     switch(poll(&pfd,1,RECV_WAIT))
     {
-        case 0 :    fprintf(stderr,"Aucune réponse du clientclient %s - %d | Fermeture connexion.\n\n",ip_clt,port);
+        case 0 :    fprintf(stderr,"Aucune réponse du client %s - %d | Fermeture connexion.\n\n",ip_clt,port);
                     close(sockclt);
                     pthread_exit(NULL);
                     break;
@@ -691,8 +691,13 @@ void * inscription(void * param)
     int lus, inscrit = 0;
     char msg[REGI_LENGTH];
 
-    ParserMSG_init(&p);
+    /* Pour avoir l'adresse distant */
+    struct sockaddr address;
+    socklen_t len;
+    struct sockaddr_in *address_in;
+    char *ip = NULL;
 
+    ParserMSG_init(&p);
     sleep(1);
 
     sock = socket(PF_INET,SOCK_STREAM,0);
@@ -722,6 +727,24 @@ void * inscription(void * param)
         perror("inscription - connect() ");
         close(sock);
         pthread_exit(NULL);
+    }
+
+    /* Obtenir l'adresse avec getpeername */
+    len = sizeof(address);
+    err = getpeername(sock, &address, &len);
+
+    if(err == -1)
+    {
+        perror("getpeername ");
+        close(sock);
+        pthread_exit(NULL);
+    }
+    else
+    {
+        address_in = (struct sockaddr_in *) &address;
+        ip = inet_ntoa(address_in->sin_addr);
+        printf("@ : %s\nPort : %d\n",ip,ntohs(address_in->sin_port));
+        ip_to15(ip,diff->ip_local);
     }
 
     sprintf(msg,"REGI %.8s %.15s %.4s %.15s %.4s\r\n",diff->id,diff->ip_multicast,diff->port_multicast,
