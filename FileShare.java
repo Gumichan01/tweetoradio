@@ -12,8 +12,7 @@ import java.net.Socket;
 
 
 
-
-class FileShare{
+public class FileShare{
 	
 	public final static String CR = "\r";
 	public final static String LF = "\n";
@@ -26,15 +25,15 @@ class FileShare{
 		int port;
 		
 		
-		try{
-			
-			if(args.length < 4){
-				
+		if(args.length < 4){
+	
 
-				System.err.println("java  [-s|-g] <@IP> <port> <nomFicher>");
-				System.err.println("-s : envoyer un fichier \n-g : recevoir un fichier");
-				return;
-			}
+			System.err.println("java  [-s|-g] <@IP> <port> <nomFicher>");
+			System.err.println("-s : envoyer un fichier \n-g : recevoir un fichier");
+			return;
+		}
+		
+		try{
 			
 			opt = args[0];
 			ip = args[1];
@@ -52,7 +51,9 @@ class FileShare{
 				envoi(socket, r, w, nomFichier);
 				
 			}else if(opt.equals("-g")){
+			
 				reception(socket, r, w, nomFichier);
+			
 			}else{
 				
 				System.err.println("Option invalide");
@@ -119,7 +120,7 @@ class FileShare{
 					try{
 						// On temporise pour laisser le temps au diffuseur 
 						// de récupérer les informations
-						Thread.sleep(1000);
+						Thread.sleep(500);
 					}catch(Exception e){	
 						e.printStackTrace();
 					}
@@ -154,65 +155,42 @@ class FileShare{
 	
 	
 	public static void reception(Socket socket,BufferedReader r, PrintWriter w, String nomFichier) throws IOException{
-		
 
 		String s = null;
-		
+
 		int n;
 		char [] cbuf = new char[140 + 5 +2];
 		byte [] buf = new byte[140 + 5 +2]; 
 		FileOutputStream fr = new FileOutputStream(new File(nomFichier));	
-		
-		
+
+
 		try{
 			
 			w.write("GETF " + nomFichier + CR + LF);
 			w.flush();
 
-			
-			//System.out.println(s);
-			
 			while((n = r.read(cbuf)) != -1
 					&& new String(cbuf,0,n).subSequence(0, 5).equals("DATA ")){
-				
+
 				s = new String(cbuf,0,n);
 
 				System.out.println("Recu  "+n + " octets depuis le diffuseur");
-				
-				
+
 				fr.write(s.substring(5, n).getBytes());
 				fr.flush();
-				
+
 			}
-			
+
 			System.out.println("Fin de reception");
-			
-			
+
 		}finally{
-			
+
 			fr.close();
 		}
-		
-		
-		
+
 	}
 	
-	
-	
-	
-	
-	
-	
 }
-
-
-
-
-
-
-
-
-
 
 
 

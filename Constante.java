@@ -1,5 +1,3 @@
-
-
 /**
  * @brief Constante.
  *

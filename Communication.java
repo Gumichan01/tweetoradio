@@ -1,7 +1,3 @@
-
-
-import java.net.Socket;
-
 /**
  * @brief Communication.
  *
@@ -12,8 +8,6 @@ import java.net.Socket;
 public interface Communication {
     
     public void sendto_tcp();
-    
-    public void send_udp();
     
     public void receive_udp();
 }

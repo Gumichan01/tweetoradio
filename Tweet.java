@@ -1,5 +1,3 @@
-
-
 /**
  * @brief Tweet.
  *
@@ -27,34 +25,14 @@ public class Tweet {
         message = p_msg;
     }
 
-    
     @Override
     public String toString() {
-		
-		for (int i = message.length() -1; i >= 0; i--) {
-		
-			if (message.charAt(i) != '#') {
-				return id + " " + message.substring(0, i+1) + "\n";
-			}
-		}
-		
-		return id + " " + message + "\n";
-	}
+        for (int i = message.length() - 1; i >= 0; i--) {
+            if (message.charAt(i) != '#') {
+                return id + " " + message.substring(0, i + 1) + "\n";
+            }
+        }
+
+        return id + " " + message + "\n";
+    }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

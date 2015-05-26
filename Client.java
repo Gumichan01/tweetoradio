@@ -257,7 +257,7 @@ public class Client implements Communication {
         }
     }
 
-    @Override
+
     public void send_udp() {
         Scanner sc = new Scanner(System.in);
         String msgSend = "", msgRcv, ip, type_msg, tweet;

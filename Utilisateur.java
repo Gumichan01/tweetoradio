@@ -1,11 +1,4 @@
-
-
-import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Scanner;
 import java.util.logging.Level;
@@ -28,20 +21,17 @@ public class Utilisateur {
      * @param args
      */
     public static void main(String[] args) {
-        String id, ip = "", tmp = "";
-        int len, menu, port;
+        String id, tmp = "";
+        int len, menu;
 
-        String test = "ACKM\r\n";
-        /*
-         if (args.length != 2) {
-         System.err.println("usage : " + args[0] + " <ID>\n");
-         System.exit(1);
-         }
+        if (args.length != 1) {
+            System.err.println("usage : java Utilisateur <ID>\n");
+            System.exit(1);
+        }
 
-         id = args[1];
-         */
-        id = "Salut";
+        id = args[0];
 
+         //id = "Pierre";
         if (id.length() > 8) {
             System.err.println("id " + id + " du client non conforme.");
             System.exit(1);
