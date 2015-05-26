@@ -74,8 +74,6 @@ int main(int argc, char **argv)
     int_to_char(port1,diff->port_multicast);
     int_to_char(port2,diff->port_local);
 
-    /*strncpy(diff->port_multicast,argv[3],PORT_LENGTH);
-    strncpy(diff->port_local,argv[4],PORT_LENGTH);*/
 
     pthread_create(&thread,NULL,tcp_server,NULL);
     pthread_create(&thread_gest,NULL,inscription,&g);
