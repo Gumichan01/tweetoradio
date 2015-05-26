@@ -693,6 +693,12 @@ void * inscription(void * param)
 
     ParserMSG_init(&p);
 
+    /*
+        Bricolage. Parfois, ce thread se lance avant celui du serveur TCP
+        On le fait dormir 1 seconde pour qu'il ne grille pas la politesse à TCP
+    */
+    sleep(1);
+
     sock = socket(PF_INET,SOCK_STREAM,0);
 
     if(sock == -1)
