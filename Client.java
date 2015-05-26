@@ -306,22 +306,36 @@ public class Client implements Communication {
         Scanner sc = new Scanner(System.in);
         String msgSend = "", msgRcv, ip, type_msg, tweet;
         byte[] dataRcv = new byte[Constante.DIFF_LENGTH];
-        int port;
+        int port, i;
+        
+        
         System.out.println("Entrez l'adresse ip d'écoute multicast : ");
         ip = sc.next();
         System.out.println("Entrez son port : ");
         port = sc.nextInt();
+        
         try {
+        
            	MulticastSocket mso = new MulticastSocket(port);
            	mso.joinGroup(InetAddress.getByName(ip));
+           	
             DatagramPacket paquet = new DatagramPacket(dataRcv, dataRcv.length);
+            
             while (true) {
                 mso.receive(paquet);
                 msgRcv = new String(paquet.getData());
-                System.out.println(msgRcv);
+                
+				i = msgRcv.length()-3;
+
+				while(i > 0 && msgRcv.charAt(i) == '#'){
+					i--;
+				}
+                
+                System.out.println(msgRcv.substring(0,i+1));
             }
         } catch (IOException ex) {
             ex.printStackTrace();
         }
     }
+
 }
