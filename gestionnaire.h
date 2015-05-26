@@ -10,6 +10,8 @@
 #define NB_CLIENTS 1024
 #define CHECK_LENGTH 30
 
+
+
 typedef struct DiffuseurInfo{
 
 	char id[ID_LENGTH];
@@ -21,6 +23,8 @@ typedef struct DiffuseurInfo{
 	char port_local[PORT_LENGTH];
 
 }DiffuseurInfo;
+
+
 
 typedef struct Gestionnaire{
 
@@ -34,6 +38,8 @@ typedef struct Gestionnaire{
 
 }Gestionnaire;
 
+
+
 typedef struct Client_info{
 
 	char ip[IP_LENGTH + 1];
@@ -41,6 +47,8 @@ typedef struct Client_info{
 	int sockclt;
 
 }Client_info;
+
+
 
 void Gestionnaire_init(Gestionnaire *g);
 

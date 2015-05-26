@@ -10,12 +10,14 @@
 
 #define min(a, b) (a < b ? a : b)
 
+
 extern Gestionnaire *gest;
 
 static pthread_mutex_t verrouS = PTHREAD_MUTEX_INITIALIZER;
 static pthread_mutex_t verrouL = PTHREAD_MUTEX_INITIALIZER;
 
 static int num_diff = 0;
+
 
 void Gestionnaire_init(Gestionnaire *g)
 {
@@ -46,9 +48,10 @@ void DiffuseurInfo_init(DiffuseurInfo * d)
 	memset(d->port_local, '0', PORT_LENGTH);
 }
 
+
 /*
-Convertit un entier associé au numéro de diffuseur
-en chaine de caractères sans '\0'
+    Convertit un entier associé au numéro de diffuseur
+    en chaine de caractères sans '\0'
 */
 int int_to_char_num_diff(int n, char *str)
 {
