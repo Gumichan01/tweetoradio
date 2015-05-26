@@ -229,7 +229,7 @@ int parseREGI(const char *str, ParsedMSG *p)
     int i;
 
     p->msg_type = REGI;
-    err = sscanf(str,"REGI%c%8[a-zA-Z0-9_-]%c%d.%d.%d.%d%c%d%c%d.%d.%d.%d%c%d\r\n",
+    err = sscanf(str,"REGI%c%8[a-zA-Z0-9_-#]%c%d.%d.%d.%d%c%d%c%d.%d.%d.%d%c%d\r\n",
                     &sp[0],p->id,&sp[1],
                         &champs_multi[0],&champs_multi[1],
                             &champs_multi[2],&champs_multi[3],
