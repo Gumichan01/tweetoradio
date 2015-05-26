@@ -72,16 +72,15 @@ DONE - [Luxon] Développer le diffuseur (partie client TCP + multi-diffusion)
 		- (DONE) Sauvegarde des messages envoyés dans l'historique.
 
 DOING - Développer le gestionnaire
-	- [Pierre] Demande d'enregistrement du diffuseur (DOING)
-	- [Pierre] Interrogation du gestionnaire sur l'activité des diffuseurs (DOING)
+	- [Pierre] Demande d'enregistrement du diffuseur (DONE)
+	- [Pierre] Interrogation du gestionnaire sur l'activité des diffuseurs (DONE)
 
 TODO - [Pierre ou Luxon] Etablir la communication entre l'utilisateur et le gestionnaire
-	- (TODO) Gérer les requêtes utilisateurs
-	- (TODO) Créer un programme client
+	- (DONE) Gérer les requêtes utilisateurs
+	- (DONE) Créer un programme client
 
 Extensions possibles :
 
  - Partage de fichier (DONE)
- - Commande d'administration d'un diffuseur et/ou d'un gestionnaire (TODO)
- - Extinction propre du système
- - Des suggestions ?
+ - Commande d'administration d'un diffuseur et/ou d'un gestionnaire (DONE)
+ - Extinction propre du système (DONE)
