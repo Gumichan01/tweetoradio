@@ -50,7 +50,7 @@ clients :
 
 
 # On construit l'executable du gestionnaire
-$(EXEC_GEST) : gestionnaire.o  mainGestionnaire.o parser.o ip_convert.o
+$(EXEC_GEST) : gestionnaire.o  mainGestionnaire.o parser.o ip_convert.o annexe.o
 	$(CC) -o $(EXEC_GEST) $^ $(LFLAGS)
 
 gestionnaire.o : gestionnaire.c gestionnaire.h

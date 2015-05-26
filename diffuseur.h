@@ -72,8 +72,6 @@ typedef struct Gest_info{
 
 void Diffuseur_init(Diffuseur *d);
 
-int int_to_char(int n,char *str);
-
 void * tcp_server(void *param);
 
 void * tcp_request(void * param);

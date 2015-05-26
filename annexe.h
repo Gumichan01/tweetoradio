@@ -21,6 +21,7 @@
 /* Créer une arborescence à partir du chemin passé en paramètre*/
 int mkdirP(char *arborescence);
 
+int int_to_char(int n,char *str);
 
 #endif
 

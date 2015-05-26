@@ -41,45 +41,6 @@ void Diffuseur_init(Diffuseur *d)
 }
 
 
-/*
-    Convertit un entier associé au numéro de message
-    en chaine de caractères sans '\0'
-*/
-int int_to_char(int n,char *str)
-{
-    char tmp[NUM_MESS_LENGTH+1];
-
-    if(str == NULL || strnlen(str,NUM_MESS_LENGTH) < NUM_MESS_LENGTH)
-    {
-        return -1;
-    }
-
-    if( n > 1000 && n < 10000)
-    {
-        snprintf(tmp,NUM_MESS_LENGTH+1,"%d",n);
-    }
-    else if( n > 100)
-    {
-        snprintf(tmp,NUM_MESS_LENGTH+1,"0%d",n);
-    }
-    else if( n > 9)
-    {
-        snprintf(tmp,NUM_MESS_LENGTH+1,"00%d",n);
-    }
-    else if (n > 0)
-    {
-        snprintf(tmp,NUM_MESS_LENGTH+1,"000%d",n);
-    }
-    else
-    {
-        return -1;
-    }
-
-    strncpy(str,tmp,NUM_MESS_LENGTH);
-
-    return 0;
-}
-
 
 /*
     Gère le serveur TCP

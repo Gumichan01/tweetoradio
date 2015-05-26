@@ -5,6 +5,7 @@
 
 #include <pthread.h>
 
+#include "annexe.h"
 #include "gestionnaire.h"
 
 #define min(a, b) (a < b ? a : b)
@@ -46,8 +47,8 @@ void DiffuseurInfo_init(DiffuseurInfo * d)
 }
 
 /*
-Convertit un entier associé au numéro de diffuseur
-en chaine de caractères sans '\0'
+Convertit un entier associÃ© au numÃ©ro de diffuseur
+en chaine de caractÃ¨res sans '\0'
 */
 int int_to_char_num_diff(int n, char *str)
 {
@@ -76,44 +77,6 @@ int int_to_char_num_diff(int n, char *str)
 	return 0;
 }
 
-/*
-Convertit un entier associé au numéro de port
-en chaine de caractères sans '\0'
-*/
-int int_to_char_port(int n, char *str)
-{
-	char tmp[PORT_LENGTH + 1];
-
-	if (str == NULL || strnlen(str, PORT_LENGTH) < PORT_LENGTH)
-	{
-		return -1;
-	}
-
-	if (n > 1000 && n < 10000)
-	{
-		snprintf(tmp, PORT_LENGTH + 1, "%d", n);
-	}
-	else if (n > 100)
-	{
-		snprintf(tmp, PORT_LENGTH + 1, "0%d", n);
-	}
-	else if (n > 9)
-	{
-		snprintf(tmp, PORT_LENGTH + 1, "00%d", n);
-	}
-	else if (n > 0)
-	{
-		snprintf(tmp, PORT_LENGTH + 1, "000%d", n);
-	}
-	else
-	{
-		return -1;
-	}
-
-	strncpy(str, tmp, PORT_LENGTH);
-
-	return 0;
-}
 
 void * tcp_server_client(void *param)
 {
@@ -234,7 +197,7 @@ void * tcp_request_client(void * param)
 		pthread_exit(NULL);
 	}
 
-	printf("tcp_request_client - Message de %s - %d reconnu par le gestionnaire et pret à être traité\n", ip_clt, port);
+	printf("tcp_request_client - Message de %s - %d reconnu par le gestionnaire et pret Ã  Ãªtre traitÃ©\n", ip_clt, port);
 	switch (p.msg_type)
 	{
 	case LIST:
@@ -281,7 +244,7 @@ void * tcp_request_client(void * param)
 
 	if (err == -1)
 	{
-		fprintf(stderr, "tcp_request_client() : Erreur interne liée aux opérations internes, Veuillez contacter un administrateur.\n");
+		fprintf(stderr, "tcp_request_client() : Erreur interne liÃ©e aux opÃ©rations internes, Veuillez contacter un administrateur.\n");
 		fflush(stderr);
 	}
 
@@ -403,7 +366,7 @@ void * tcp_server_diffuseur(void * param)
 			break;
 		}
 
-		printf("\nDiffuseur connecté - IP : %s | Port : %d\n", inet_ntoa(in.sin_addr), ntohs(in.sin_port));
+		printf("\nDiffuseur connectÃ© - IP : %s | Port : %d\n", inet_ntoa(in.sin_addr), ntohs(in.sin_port));
 
 
 		if ((clt_info = malloc(sizeof(Client_info))) == NULL)
@@ -430,7 +393,7 @@ void * tcp_request_diffuseur(void * param)
 {
 	Client_info *c = (Client_info *)param;
 	ParsedMSG p;
-	char msg[BUFSIZ], ip_clt[IP_LENGTH];
+	char msg[REGI_LENGTH], ip_clt[IP_LENGTH];
 	int port, sockDiff, lus, err, index = -1;
 
 	ParserMSG_init(&p);
@@ -444,7 +407,7 @@ void * tcp_request_diffuseur(void * param)
 
 	pthread_detach(pthread_self());
 
-	if ((lus = recv(sockDiff, msg, BUFSIZ, 0)) == -1)
+	if ((lus = recv(sockDiff, msg, REGI_LENGTH, 0)) == -1)
 	{
 		perror("tcp_request_diffuseur - recv()");
 		close(sockDiff);
@@ -464,7 +427,7 @@ void * tcp_request_diffuseur(void * param)
 		pthread_exit(NULL);
 	}
 
-	printf("tcp_request_diffuseur - Message de %s - %d reconnu par le gestionnaire et pret à être traité\n", ip_clt, port);
+	printf("tcp_request_diffuseur - Message de %s - %d reconnu par le gestionnaire et pret Ã  Ãªtre traitÃ© \n", ip_clt, port);
 
 
 	switch (p.msg_type)
@@ -472,7 +435,7 @@ void * tcp_request_diffuseur(void * param)
 	case REGI:
 		if (num_diff == MAX_NUM_DIFFUSEUR)
 		{
-			printf("Nombre de diffuseurs pouvant être enregistrée atteint. Impossible d'enregistrer le diffuseur %.8s.\n", p.id);
+			printf("Nombre de diffuseurs pouvant Ãªtre enregistrÃ©s atteint. Impossible d'enregistrer le diffuseur %.8s.\n", p.id);
 		}
 		else
 		{
@@ -572,8 +535,8 @@ int enregistrer_diffuseur(ParsedMSG *p)
 		strncpy(diff->id, p->id, ID_LENGTH);
 	}
 
-	int_to_char_port(atoi(p->port_multicast), diff->port_multicast);
-	int_to_char_port(atoi(p->port_machine), diff->port_local);
+	int_to_char(atoi(p->port_multicast), diff->port_multicast);
+	int_to_char(atoi(p->port_machine), diff->port_local);
 
 	return index;
 }
@@ -621,7 +584,7 @@ int check_diffuseur(int index, int sockDiff)
 	switch (p.msg_type)
 	{
 	case IMOK:
-		printf("Diffuseur %.8s à jour\n", diff->id);
+		printf("Diffuseur %.8s Ã  jour\n", diff->id);
 		return 1;
 	default:
 		int_to_char_num_diff(num_diff, gest->num_diff);
