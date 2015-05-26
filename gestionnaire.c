@@ -105,7 +105,7 @@ void * tcp_server_client(void *param)
 		pthread_exit(NULL);
 	}
 
-	printf("ip du serveur TCP avec le client du gestionnaire %s\n", inet_ntoa(in.sin_addr));
+	printf("Adresse IP du serveur TCP avec le client du gestionnaire %s\n", inet_ntoa(in.sin_addr));
 
 	sz = sizeof(in);
 
@@ -196,31 +196,27 @@ void * tcp_request_client(void * param)
 		pthread_exit(NULL);
 	}
 
-	printf("tcp_request_client - Message de %s - %d reconnu par le gestionnaire et pret Ã  Ãªtre traitÃ©\n", ip_clt, port);
+	printf("tcp_request_client - Message de %s - %d reconnu par le gestionnaire et pret a etre traite\n", ip_clt, port);
 	switch (p.msg_type)
 	{
-	case LIST:
-                {
-                    pthread_mutex_lock(&verrouL);
-                    /*err = send_list_diffuseur(&p, sockClt);*/
-
-                    if (int_to_char_num_diff(num_diff, gest->num_diff) == -1)
+        case LIST:
                     {
-                        fprintf(stderr,"erreur send_list_diffuseur() - int_to_char_num_diff()\n");
-                    }
+                        pthread_mutex_lock(&verrouL);
 
-                    sprintf(msg1, "LINB %.2s\r\n", gest->num_diff);
+                        if (int_to_char_num_diff(num_diff, gest->num_diff) == -1)
+                        {
+                            fprintf(stderr,"erreur send_list_diffuseur() - int_to_char_num_diff()\n");
+                        }
 
-                    if ((err = send(sockClt, msg1, strlen(msg1), MSG_NOSIGNAL)) == -1)
-                    {
-                        perror("send_list_diffuseur - send() ");
-                    }
+                        sprintf(msg1, "LINB %.2s\r\n", gest->num_diff);
 
-                    while (it < MAX_SLOT && gest->slot[it] != NULL)
-                    {
+                        if ((err = send(sockClt, msg1, strlen(msg1), MSG_NOSIGNAL)) == -1)
+                        {
+                            perror("send_list_diffuseur - send() ");
+                        }
 
-                        /*if ((err = strncmp(gest->slot[it]->id, "########", ID_LENGTH)) != 0)*/
-                        /*{*/
+                        while (it < MAX_SLOT && gest->slot[it] != NULL)
+                        {
                             sprintf(msg2, "ITEM %.8s %.15s %.4s %.15s %.4s\r\n", gest->slot[it]->id,
                                         gest->slot[it]->ip_multicast, gest->slot[it]->port_multicast,
                                             gest->slot[it]->ip_local, gest->slot[it]->port_local);
@@ -229,15 +225,17 @@ void * tcp_request_client(void * param)
                             {
                                 perror("send_list_diffuseur - send() ");
                             }
-                        /*}*/
-                        it++;
-                    }
 
-                    pthread_mutex_unlock(&verrouL);
-                }
-		break;
-	default:  err = 0;
-		break;
+                            it++;
+                        }
+
+                        pthread_mutex_unlock(&verrouL);
+                    }
+                    break;
+
+        default:
+                    err = 0;
+                    break;
 	}
 
 	if (err == -1)
@@ -253,7 +251,6 @@ void * tcp_request_client(void * param)
 
 int send_list_diffuseur(ParsedMSG *p, int sockClt)
 {
-	/*DiffuseurInfo diff;*/
 	char msg1[LINB_LENGTH], msg2[ITEM_LENGTH];
 	int  err, it = 0;
 
@@ -279,20 +276,17 @@ int send_list_diffuseur(ParsedMSG *p, int sockClt)
 
 	while (it < MAX_SLOT && gest->slot[it] != NULL)
 	{
-		/*diff = &gest->slot[it++];*/
 
-		/*if ((err = strncmp(gest->slot[it]->id, "########", ID_LENGTH)) != 0)*/
-		/*{*/
-			sprintf(msg2, "ITEM %.8s %.15s %.4s %.15s %.4s\r\n", gest->slot[it]->id,
-                        gest->slot[it]->ip_multicast, gest->slot[it]->port_multicast,
-                            gest->slot[it]->ip_local, gest->slot[it]->port_local);
+        sprintf(msg2, "ITEM %.8s %.15s %.4s %.15s %.4s\r\n", gest->slot[it]->id,
+                    gest->slot[it]->ip_multicast, gest->slot[it]->port_multicast,
+                        gest->slot[it]->ip_local, gest->slot[it]->port_local);
 
-			if ((err = send(sockClt, msg2, strlen(msg2), MSG_NOSIGNAL)) == -1)
-			{
-				perror("send_list_diffuseur - send() ");
-				return -1;
-			}
-		/*}*/
+        if ((err = send(sockClt, msg2, strlen(msg2), MSG_NOSIGNAL)) == -1)
+        {
+            perror("send_list_diffuseur - send() ");
+            return -1;
+        }
+
         it++;
 	}
 
@@ -309,10 +303,7 @@ void * tcp_server_diffuseur(void * param)
 	int err, sockserv, sock_guest;
 	struct sockaddr_in in;
 
-    /*
-        Correction d'un bug provoquant un effet de bord
-        sur le resultat de atoi()
-     */
+
     memset(tmp,0,sizeof(tmp));
     strncpy(tmp,gest->port_local_diff,PORT_LENGTH);
 
@@ -336,7 +327,7 @@ void * tcp_server_diffuseur(void * param)
 		pthread_exit(NULL);
 	}
 
-	printf("ip du serveur TCP avec le client du gestionnaire %s\n", inet_ntoa(in.sin_addr));
+	printf("Adresse IP du serveur TCP avec le diffuseur du gestionnaire %s\n", inet_ntoa(in.sin_addr));
 
 	sz = sizeof(in);
 
@@ -354,6 +345,7 @@ void * tcp_server_diffuseur(void * param)
 		close(sockserv);
 		pthread_exit(NULL);
 	}
+
 	printf("Le gestionnaire est en attente d'un diffuseur sur le port : %d \n", ntohs(in.sin_port));
 
 	while (1)
@@ -455,14 +447,14 @@ void * tcp_request_diffuseur(void * param)
 	}
 
 
-	if (index == -1)
+	if(index == -1)
 	{
 		printf("tcp_request_diffuseur - Fin communication avec %s - %d | Fermeture connexion.\n", ip_clt, port);
 		close(sockDiff);
 		pthread_exit(NULL);
 	}
 
-	while (valide)
+	while(valide)
 	{
 		if (check_diffuseur(index, sockDiff) == -1)
 			valide = 0;
@@ -475,7 +467,7 @@ void * tcp_request_diffuseur(void * param)
 	pthread_exit(NULL);
 }
 
-/** @todo refactorer l'enregistrement*/
+
 int enregistrer_diffuseur(ParsedMSG *p)
 {
 	int i = 0;
@@ -490,47 +482,28 @@ int enregistrer_diffuseur(ParsedMSG *p)
         i++;
     }
 
-	/*for (; iterator < MAX_SLOT; iterator++)
-	{
-		diff = &gest->slot[iterator];
-
-		if (!strncmp(diff->id, "########", ID_LENGTH))
-		{
-			index = min(index, iterator);
-		}
-		else
-		{
-			if (!strncmp(diff->id, p->id, ID_LENGTH))
-			{
-				printf("Le diffuseur %.8s est déjà enregistré.\n", diff->id);
-				return -1;
-			}
-		}
-	}*/
 
 	if (i == MAX_SLOT)
 	{
+	    /* On est au bout du tableau - Il n'y a rien à faire */
 		fprintf(stderr,"enregistrer_diffuseur() - Il n'y a pas de place disponilble. \n");
 		return -1;
 	}
 	else if(gest->slot[i] != NULL)
 	{
+	    /* On est sur un emplacement non NULL - peut importe qui est là, ce n'est pas normal */
 	    if(!strncmp(gest->slot[i]->id,p->id,ID_LENGTH))
-	    {
-	        fprintf(stderr,"enregistrer_diffuseur() - Diffuseur déjà enregistré \n");
-	        return -1;
-	    }
+	        fprintf(stderr,"enregistrer_diffuseur() - Diffuseur deja present \n");
 	    else
-	    {
 	        fprintf(stderr,"enregistrer_diffuseur() - Erreur interne, violation de l'invariant de boucle. Contactez l'admin !\n");
-	        return -1 ;
-	    }
+
+	    return -1;
 	}
 
     /* Incrementation */
     num_diff += 1;
 
-
+    /* Emplacement libre : on peut ajouter un nouveau diffuseur */
     gest->slot[i] = malloc(sizeof(DiffuseurInfo));
 
     if(gest->slot[i] == NULL)
@@ -539,7 +512,7 @@ int enregistrer_diffuseur(ParsedMSG *p)
         return -1;
     }
 
-    DiffuseurInfo_init(gest->slot[i]);
+    DiffuseurInfo_init(gest->slot[i]);  /* On met les champs à zéro */
 
 	if (int_to_char_num_diff(num_diff, gest->num_diff) == -1)
 	{
@@ -547,8 +520,7 @@ int enregistrer_diffuseur(ParsedMSG *p)
 		return -1;
 	}
 
-	/*diff = &gest->slot[index];*/
-
+    /* On rensignes les champs avec les données du parser */
     strncpy(gest->slot[i]->id, p->id, ID_LENGTH);
 	strncpy(gest->slot[i]->ip_multicast, p->ip_multicast, IP_LENGTH);
 	strncpy(gest->slot[i]->ip_local, p->ip_machine, IP_LENGTH);
@@ -556,27 +528,11 @@ int enregistrer_diffuseur(ParsedMSG *p)
     strncpy(gest->slot[i]->port_multicast, p->port_multicast, PORT_LENGTH);
     strncpy(gest->slot[i]->port_local, p->port_machine, PORT_LENGTH);
 
-	/*if (len < ID_LENGTH)
-	{
-		strncpy(diff->id, p->id, len);
-		len = ID_LENGTH - len;
-		while (len-- != 0)
-		{
-			strcat(diff->id, "#");
-		}
-	}*/
-	/*else*/
-	/*{*/
-
-	/*}*/
-
-	/*int_to_char(atoi(p->port_multicast), diff->port_multicast);
-	int_to_char(atoi(p->port_machine), diff->port_local);*/
 
 	return i;
 }
 
-/** @todo refactorer check_difuseur */
+
 int check_diffuseur(int index, int sockDiff)
 {
 	ParsedMSG p;
@@ -584,51 +540,52 @@ int check_diffuseur(int index, int sockDiff)
 	int err, lus;
 
 	ParserMSG_init(&p);
-	/*diff = gest->slot[index];*/
+
 
 	if ((err = send(sockDiff, here_msg, strlen(here_msg), MSG_NOSIGNAL)) == -1)
 	{
 		perror("check_diffuseur - send() : ");
-		/*int_to_char_num_diff(--num_diff, gest->num_diff);
-		DiffuseurInfo_init(diff);*/
+
 		num_diff -= 1;
 		int_to_char_num_diff(num_diff, gest->num_diff);
 		free(gest->slot[index]);
+
 		return -1;
 	}
 
 	if ((lus = recv(sockDiff, msg, HEADER_MSG_LENGTH, 0)) == -1)
 	{
 		perror("check_diffuseur - recv()");
+
 		num_diff -= 1;
 		int_to_char_num_diff(num_diff, gest->num_diff);
 		free(gest->slot[index]);
+
 		return -1;
 	}
 
-	write(1, msg, lus);
-    fflush(stdout);
-	printf("\n");
 
 	if ((err = parse(msg, &p)) == -1)
 	{
-		perror("check_diffuseur - parse() ");
-		printf("Message non reconnu issue du diffuseur %.8s", gest->slot[index]->id);
+		printf("Diffuseur %.8s n'est plus accessible - Fin de la communication\n", gest->slot[index]->id);
+
 		num_diff -= 1;
 		int_to_char_num_diff(num_diff, gest->num_diff);
 		free(gest->slot[index]);
+
 		return -1;
 	}
 
 	switch (p.msg_type)
 	{
         case IMOK : {
-                        printf("Diffuseur %.8s est Ã  jour\n", gest->slot[index]->id);
+                        printf("Diffuseur %.8s toujours present - Maintien de la communication\n", gest->slot[index]->id);
                         err = 0;
                     }
                     break;
 
         default :	{
+                        printf("Diffuseur %.8s n'est plus accessible -  Fin de la communication\n", gest->slot[index]->id);
                         num_diff -= 1;
                         int_to_char_num_diff(num_diff, gest->num_diff);
                         free(gest->slot[index]);
@@ -640,6 +597,7 @@ int check_diffuseur(int index, int sockDiff)
 	return err;
 }
 
+
 void enregistrement_reussie(int sockDiff)
 {
 	char ok_msg[] = "REOK\r\n";
@@ -649,6 +607,7 @@ void enregistrement_reussie(int sockDiff)
 		perror("enregistrement_reussie - send() : ");
 	}
 }
+
 
 void enregistrement_echec(int sockDiff)
 {
