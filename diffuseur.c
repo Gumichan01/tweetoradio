@@ -1087,11 +1087,8 @@ void uploadFile(int sockclt,ParsedMSG *p)
     if(!strcmp(p->mess,nullStr))
         return;
 
-    /* Si on a un chemin */
-    /*mkdirP(dirname(p->mess));*/
 
-
-    fd = creat(nom, 0600);
+    fd = creat(nom, USR_LAW);
 
     if(fd == -1)
     {
@@ -1145,7 +1142,10 @@ void uploadFile(int sockclt,ParsedMSG *p)
 
     while(strncmp(buf,endFile,HEADER_MSG_LENGTH))
     {
+        write(1,p->mess,strlen(p->mess));
         write(fd,p->mess,strlen(p->mess));
+
+        memset(buf,0,INFO_LENGTH);
 
         if(poll(&pfd,1,RECV_WAIT) == 1 && pfd.revents == POLLIN)
         {

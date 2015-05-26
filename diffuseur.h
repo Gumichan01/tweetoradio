@@ -22,6 +22,8 @@ struct Stack;
 #define RECV_WAIT (30*1000)
 #define ACCEPT_WAIT (8*1000)
 #define GEST_WAIT (4*1000)
+#define USR_LAW 0600    /* Droit utilisateur */
+
 
 typedef struct Diffuseur{
 
