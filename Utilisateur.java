@@ -23,15 +23,15 @@ public class Utilisateur {
     public static void main(String[] args) {
         String id, tmp = "";
         int len, menu;
-
+/*
         if (args.length != 1) {
             System.err.println("usage : java Utilisateur <ID>\n");
             System.exit(1);
         }
 
         id = args[0];
-
-         //id = "Pierre";
+*/
+         id = "Pierre";
         if (id.length() > 8) {
             System.err.println("id " + id + " du client non conforme.");
             System.exit(1);
