@@ -1,22 +1,15 @@
-
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.DatagramPacket;
-import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.net.MulticastSocket;
 import java.net.Socket;
-import java.net.SocketException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * @brief Client.
@@ -96,25 +89,18 @@ public class Client implements Communication {
     }
 
     private void get_listDiff(String type) throws IOException {
-        
         String msgSend, msgRcv;
-        
-        String id = new String();
-        String ip_multicast = new String();
-        String port_multicast = new String();
-        String ip_machine = new String();
-        String port_machine = new String();
-
+        String id, ip_multicast, port_multicast,
+                ip_machine, port_machine;
         Integer num_diff;
         
-        int index = 5;
-
+        listDiff.clear();
         msgSend = type + "\r\n";
         pw.print(msgSend);
         pw.flush();
         msgRcv = br.readLine();
 
-        if (msgRcv != null && msgRcv.substring(0, 4).equals("LINB") ) {
+        if (msgRcv != null && msgRcv.substring(0, 4).equals("LINB")) {
             System.out.println(msgRcv + "\n");
             num_diff = new Integer(msgRcv.substring(msgRcv.length() - 2, msgRcv.length()));
             if (num_diff < 0 || num_diff > 99) {
@@ -122,31 +108,18 @@ public class Client implements Communication {
             } else {
                 for (int i = 0; i < num_diff; i++) {
                     msgRcv = br.readLine();
-                    if (msgRcv.substring(0, 4).equals("ITEM")) {
-
-                        while ((int) msgRcv.charAt(index) != 32) {
-                            id += msgRcv.charAt(index++);
+                    if (msgRcv != null) {
+                        if (msgRcv.substring(0, 4).equals("ITEM")) {
+                            id = msgRcv.substring(5, 13);
+                            ip_multicast = msgRcv.substring(14, 29);
+                            port_multicast = msgRcv.substring(30, 34);
+                            ip_machine = msgRcv.substring(35, 50);
+                            port_machine = msgRcv.substring(51, msgRcv.length());
+                            listDiff.put(id, new Item(id, ip_multicast, port_multicast, ip_machine, port_machine));
+                        } else {
+                            System.err.println("type reçu incorrect - sendto()");
+                            break;
                         }
-
-                        while ((int) msgRcv.charAt(++index) != 32) {
-                            ip_multicast += msgRcv.charAt(index);
-                        }
-
-                        while ((int) msgRcv.charAt(++index) != 32) {
-                            port_multicast += msgRcv.charAt(index);
-                        }
-
-                        while ((int) msgRcv.charAt(++index) != 32) {
-                            ip_machine += msgRcv.charAt(index);
-                        }
-
-                        while (++index < msgRcv.length()) {
-                            port_machine += msgRcv.charAt(index);
-                        }
-                        listDiff.put(id, new Item(id, ip_multicast, port_multicast, ip_machine, port_machine));
-                    } else {
-                        System.err.println("type reçu incorrect - sendto()");
-                        break;
                     }
                 }
             }
@@ -154,35 +127,32 @@ public class Client implements Communication {
     }
 
     private void get_listTweets(String type, Scanner sc) throws IOException {
-        String msgSend, msgRcv, nb_mess;
-        String id, num_mess, tweet;
+        String msgSend, msgRcv, nb_mess, id, num_mess, tweet;
 
+		listTweet.clear();
+		
         System.out.println("Ecrire le nombre de message que vous voulez lire : \n");
         nb_mess = int_to_string_nb_mess(sc.nextInt());
-        
+		
         if (nb_mess == null) {
             System.err.println("nb_mess à voir incorrect - sendto()");
             pw.close();
             br.close();
         }
-        
+		
         msgSend = type + " " + nb_mess + "\r\n";
         pw.print(msgSend);
         pw.flush();
 
         for (int i = 0; i < Integer.parseInt(nb_mess); i++) {
             msgRcv = br.readLine();
-            
             if (msgRcv != null) {
-                
                 if (msgRcv.substring(0, 4).equals("OLDM")) {
                     num_mess = msgRcv.substring(5, 9);
                     id = msgRcv.substring(9, 18);
                     tweet = msgRcv.substring(19, msgRcv.length());
                     listTweet.put(num_mess, new Tweet(id, num_mess, tweet));
-                
                 } else {
-                
                     if (msgRcv.substring(0, 4).equals("ENDM")) {
                         System.out.println("ENDM");
                         return;
@@ -191,7 +161,6 @@ public class Client implements Communication {
                         return;
                     }
                 }
-            
             } else {
                 System.err.println("erreur - sendto()");
                 return;
@@ -206,16 +175,19 @@ public class Client implements Communication {
     }
 
     private void send_mess(String type) throws IOException {
-        String msgSend = "", msgRcv, tweet;
-		Scanner sc = new Scanner(System.in);
+        String msgSend, msgRcv, tweet;
+        Scanner sc = new Scanner(System.in);
 
         System.out.println("Ecrire le message que vous voulez envoyer : \n");
-        tweet = sc.next();
+        tweet = sc.nextLine();
+
         while (tweet.length() > 140) {
-            System.out.println("Message trop grand. Recommencez : \n");
-            tweet = sc.next();
+            System.out.println("Tweet trop long. Recommencez : \n");
+            tweet = sc.nextLine();
         }
-        msgSend += type + " " + identifiant + " " + tweet + "\r\n";
+
+        msgSend = type + " " + identifiant + " " + tweet + "\r\n";
+
         pw.print(msgSend);
         pw.flush();
         msgRcv = br.readLine();
@@ -272,92 +244,27 @@ public class Client implements Communication {
         }
     }
 
-
-    public void send_udp() {
-        Scanner sc = new Scanner(System.in);
-        String msgSend = "", msgRcv, ip, type_msg, tweet;
-        
-        byte[] dataSend, dataRcv = new byte["ACKM\r\n".getBytes().length];
-        int port;
-        
-        try {
-            DatagramSocket dso = new DatagramSocket();
-            System.out.println("Entrez l'adresse ip multicast : ");
-            ip = sc.next();
-        
-            System.out.println("Entrez son port : ");
-            port = sc.nextInt();
-            InetSocketAddress ia = new InetSocketAddress(ip, port);
-        
-            System.out.println("Ecrire le type message à envoyer : \n");
-            type_msg = sc.next();
-
-            if (type_msg.substring(0, 4).equals("MESS")) {
-                System.out.println("Ecrire le message que vous voulez envoyer : \n");
-                tweet = sc.next();
-        
-                while (tweet.length() > 140) {
-                    System.out.println("Message trop grand. Recommencez : \n");
-                    tweet = sc.next();
-                }
-        
-                msgSend += type_msg + " " + identifiant + " " + tweet + "\r\n";
-                dataSend = msgSend.getBytes();
-                DatagramPacket paquet = new DatagramPacket(dataSend, dataSend.length, port);
-                dso.send(paquet);
-                paquet = new DatagramPacket(dataRcv, dataRcv.length, port);
-                dso.receive(paquet);
-                msgRcv = new String(paquet.getData(), 0, paquet.getLength());
-        
-                if (msgRcv.substring(0, msgRcv.length()).equals("ACKM\r\n")) {
-                    System.out.println("Réception du tweet par le diffuseur.\n");
-                    dso.close();
-                } else {
-                    System.err.println("type reçu incorrect, attendu : ENDM - sendto().\n");
-                    dso.close();
-                }
-            }
-
-        } catch (IOException ex) {
-            System.err.println("erreur - send_udp().\n");
-        }
-    }
-
     @Override
     public void receive_udp() {
         Scanner sc = new Scanner(System.in);
-        String msgSend = "", msgRcv, ip, type_msg, tweet;
+        String msgRcv, ip;
         byte[] dataRcv = new byte[Constante.DIFF_LENGTH];
-        int port, i;
-        
-        
+        int port;
         System.out.println("Entrez l'adresse ip d'écoute multicast : ");
         ip = sc.next();
         System.out.println("Entrez son port : ");
         port = sc.nextInt();
-        
         try {
-        
-           	MulticastSocket mso = new MulticastSocket(port);
-           	mso.joinGroup(InetAddress.getByName(ip));
-           	
+            MulticastSocket mso = new MulticastSocket(port);
+            mso.joinGroup(InetAddress.getByName(ip));
             DatagramPacket paquet = new DatagramPacket(dataRcv, dataRcv.length);
-            
             while (true) {
                 mso.receive(paquet);
                 msgRcv = new String(paquet.getData());
-                
-				i = msgRcv.length()-3;
-
-				while(i > 0 && msgRcv.charAt(i) == '#'){
-					i--;
-				}
-                
-                System.out.println(msgRcv.substring(0,i+1));
+                System.out.println(msgRcv);
             }
         } catch (IOException ex) {
             ex.printStackTrace();
         }
     }
-
 }
