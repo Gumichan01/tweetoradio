@@ -8,8 +8,6 @@
 #include "annexe.h"
 #include "gestionnaire.h"
 
-#define min(a, b) (a < b ? a : b)
-
 
 extern Gestionnaire *gest;
 

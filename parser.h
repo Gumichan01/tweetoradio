@@ -6,12 +6,12 @@
 #define PARSER_INCLUDED_H
 
 
-#define MAX_NB_MESS 999     /* Nombre max de messages affichables dans l'historique */
-#define MIN_NB_MESS 0       /* Nombre min de messages affichables dans l'historique */
-#define MAX_PORT_VALUE 9999
-#define MIN_PORT_VALUE 0
-#define IPV4_MAX 255
-#define IPV4_MIN 0
+#define MAX_NB_MESS 999         /* Nombre max de messages affichables dans l'historique */
+#define MIN_NB_MESS 0           /* Nombre min de messages affichables dans l'historique */
+#define MAX_PORT_VALUE 9999     /* Valeur max du numéro de port */
+#define MIN_PORT_VALUE 0        /* Valeur min du numéro de port */
+#define IPV4_MAX 255            /* Valeur max de l'octet de l'IP */
+#define IPV4_MIN 0              /* Valeur min de l'octet de l'IP */
 
 
 /*

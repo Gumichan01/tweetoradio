@@ -10,7 +10,6 @@
 #include <string.h>
 
 #include <libgen.h>
-
 #include <pthread.h>
 
 #include "diffuseur.h"
